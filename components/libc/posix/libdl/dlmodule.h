@@ -72,6 +72,7 @@ struct rt_dlmodule *dlmodule_self(void);
 
 struct rt_dlmodule *dlmodule_load(const char* pgname);
 struct rt_dlmodule *dlmodule_exec(const char* pgname, const char* cmd, int cmd_size);
+struct rt_dlmodule *bm_dlmodule_load(const char* filename, rt_uint8_t *module_ptr);
 
 #if defined(RT_USING_CUSTOM_DLMODULE)
 struct rt_dlmodule* dlmodule_load_custom(const char* filename, struct rt_dlmodule_ops* ops);

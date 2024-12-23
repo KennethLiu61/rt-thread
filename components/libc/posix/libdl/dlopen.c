@@ -75,3 +75,50 @@ void* dlopen(const char *filename, int flags)
     return (void*)module;
 }
 RTM_EXPORT(dlopen);
+
+void* bm_dlopen(const char *filename, rt_uint8_t *module_ptr)
+{
+    struct rt_dlmodule *module;
+    char *fullpath;
+    const char*def_path = MODULE_ROOT_DIR;
+
+    /* check parameters */
+    RT_ASSERT(filename != RT_NULL);
+
+    if (filename[0] != '/') /* it's a relative path, prefix with MODULE_ROOT_DIR */
+    {
+        fullpath = rt_malloc(strlen(def_path) + strlen(filename) + 2);
+
+        /* join path and file name */
+        rt_snprintf(fullpath, strlen(def_path) + strlen(filename) + 2,
+            "%s/%s", def_path, filename);
+    }
+    else
+    {
+        fullpath = (char*)filename; /* absolute path, use it directly */
+    }
+
+    rt_enter_critical();
+
+    /* find in module list */
+    module = dlmodule_find(fullpath);
+
+    if(module != RT_NULL)
+    {
+        rt_exit_critical();
+        module->nref++;
+    }
+    else
+    {
+        rt_exit_critical();
+        module = bm_dlmodule_load(fullpath, module_ptr);
+    }
+
+    if(fullpath != filename)
+    {
+        rt_free(fullpath);
+    }
+
+    return (void*)module;
+}
+RTM_EXPORT(bm_dlopen);

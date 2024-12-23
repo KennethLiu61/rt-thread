@@ -939,3 +939,81 @@ int list_module(void)
     return 0;
 }
 MSH_CMD_EXPORT(list_module, list modules in system);
+
+struct rt_dlmodule* bm_dlmodule_load(const char* filename, rt_uint8_t *module_ptr)
+{
+    rt_err_t ret = RT_EOK;
+    struct rt_dlmodule *module = RT_NULL;
+
+    if (!module_ptr) goto __exit;
+
+    /* check ELF header */
+    if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
+        rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0)
+    {
+        rt_kprintf("Module: magic error\n");
+        goto __exit;
+    }
+
+    /* check ELF class */
+    if ((elf_module->e_ident[EI_CLASS] != ELFCLASS32)&&(elf_module->e_ident[EI_CLASS] != ELFCLASS64))
+    {
+        rt_kprintf("Module: ELF class error\n");
+        goto __exit;
+    }
+
+    module = dlmodule_create();
+    if (!module) goto __exit;
+
+    /* set the name of module */
+    _dlmodule_set_name(module, filename);
+
+    LOG_D("rt_module_load: %.*s", RT_NAME_MAX, module->parent.name);
+
+    if (elf_module->e_type == ET_REL)
+    {
+        ret = dlmodule_load_relocated_object(module, module_ptr);
+    }
+    else if (elf_module->e_type == ET_DYN)
+    {
+        ret = dlmodule_load_shared_object(module, module_ptr);
+    }
+    else
+    {
+        rt_kprintf("Module: unsupported elf type\n");
+        goto __exit;
+    }
+
+    /* check return value */
+    if (ret != RT_EOK) goto __exit;
+
+    /* release module data */
+    // rt_free(module_ptr);
+
+    /* increase module reference count */
+    module->nref ++;
+
+    /* deal with cache */
+#ifdef RT_USING_CACHE
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, module->mem_space, module->mem_size);
+    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, module->mem_space, module->mem_size);
+#endif
+
+    /* set module initialization and cleanup function */
+    module->init_func = dlsym(module, "module_init");
+    module->cleanup_func = dlsym(module, "module_cleanup");
+    module->stat = RT_DLMODULE_STAT_INIT;
+    /* do module initialization */
+    if (module->init_func)
+    {
+        module->init_func(module);
+    }
+
+    return module;
+
+__exit:
+    // if (module_ptr) rt_free(module_ptr);
+    if (module) dlmodule_destroy(module);
+
+    return RT_NULL;
+}

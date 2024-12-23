@@ -21,6 +21,7 @@
 #define RTLD_NEXT       ((void*)2)
 
 void *dlopen (const char *filename, int flag);
+void *bm_dlopen (const char *filename, char *module_ptr);
 const char *dlerror(void);
 void *dlsym(void *handle, const char *symbol);
 int dlclose (void *handle);
