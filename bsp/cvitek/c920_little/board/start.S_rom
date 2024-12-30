@@ -1,0 +1,171 @@
+/*
+ * Copyright (c) 2006-2024, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2024/01/11     flyingcys    The first version
+ */
+#include "riscv-virt.h"
+.org 0
+
+	.section .vectors, "ax"
+	.globl _start
+	.type _start,@function
+_start:
+	.cfi_startproc
+	.cfi_undefined ra
+.option push
+.option norelax
+//	la  gp, __global_pointer$
+.option pop
+
+	// Continue primary hart
+	csrr a0, mhartid
+	li   a1, PRIM_HART
+	bne  a0, a1, secondary
+
+	add     x0,  zero, zero
+	add     x1,  zero, zero
+	add     x2,  zero, zero
+	add     x3,  zero, zero
+	add     x4,  zero, zero
+	add     x5,  zero, zero
+	add     x6,  zero, zero
+	add     x7,  zero, zero
+	add     x8,  zero, zero
+	add     x9,  zero, zero
+	add     x10, zero, zero
+	add     x11, zero, zero
+	add     x12, zero, zero
+	add     x13, zero, zero
+	add     x14, zero, zero
+	add     x15, zero, zero
+	add     x16, zero, zero
+	add     x17, zero, zero
+	add     x18, zero, zero
+	add     x19, zero, zero
+	add     x20, zero, zero
+	add     x21, zero, zero
+	add     x22, zero, zero
+	add     x23, zero, zero
+	add     x24, zero, zero
+	add     x25, zero, zero
+	add     x26, zero, zero
+	add     x27, zero, zero
+	add     x28, zero, zero
+	add     x29, zero, zero
+	add     x30, zero, zero
+	add     sp,  zero, zero
+#if 0
+	/*
+	 * select L1I and L1D and invalidate them
+	 * invalidate IBP data, BTB data and BHT data
+	 */
+	li	t0, 0x70013
+	csrw	mcor, t0
+
+	/*
+	 * enable L1I and L1D
+	 * write allocate, write back
+	 * enable return stack
+	 * enable branch prediction
+	 * enable indirect branch predition
+	 * enable write burst
+	 * disable L0BTB to workround auipc bug
+	 */
+	li	t0, 0x1ff
+	csrw	mhcr, t0
+
+	/*
+	 * enable L2, inclusive with L1D
+	 * enable L2 TLB prefetch
+	 * enable L2 instuction prefetch (3 cache line)
+	 */
+	li	t0, 0xe0410009
+	csrw	mccr2, t0
+
+	/*
+	 * disable broadcast of fence.i, fence, and sfence.vma
+	 * enable spec fail prediction
+	 * enable L2 prefetch (32 cache line)
+	 * enable L1D prefetch (16 cache line)
+	 * enable L1I prefetch
+	 * enable loop speed-up
+	 * enable AMR (adaptive migration–replication?)
+	 */
+	li	t0, 0xe6e30c
+	csrw	mhint, t0
+
+	/*
+	 * same as reset value, just in case.
+	 * enable unaligned access
+	 * enable cmo instructions
+	 * enable CLINT S-mode software interrupt and timer interrupt
+	 * enable MMU extension attributes
+	 * enable C920 extension instructions
+	 */
+	li	t0, 0x638000
+	csrw	mxstatus, t0
+
+	fence.i
+	fence iorw, iorw
+#endif
+	/* Setup trap handler */
+	csrw mie, 0
+	csrw mip, 0
+   	la t0, trap_entry
+ 	csrw mtvec, t0
+
+	// Primary hart
+	la sp, _stack_top
+
+	// Load data section
+	la a0, _data_lma
+	la a1, _data
+	la a2, _edata
+	bgeu a1, a2, 2f
+1:
+	LOAD t0, (a0)
+	STOR t0, (a1)
+	addi a0, a0, REGSIZE
+	addi a1, a1, REGSIZE
+	bltu a1, a2, 1b
+2:
+
+	// Clear bss section
+#if 0
+	la a0, _bss
+	la a1, _ebss
+	bgeu a0, a1, 2f
+1:
+	// reduce branch time, be sure about bss alignment in linker script
+	STOR zero, 0x00 (a0)
+	STOR zero, 0x08 (a0)
+	STOR zero, 0x10 (a0)
+	STOR zero, 0x18 (a0)
+	STOR zero, 0x20 (a0)
+	STOR zero, 0x28 (a0)
+	STOR zero, 0x30 (a0)
+	STOR zero, 0x38 (a0)
+	addi a0, a0, REGSIZE * 8
+	bltu a0, a1, 1b
+2:
+#else
+	jal c920_clear_bss
+#endif
+	// argc, argv, envp is 0
+	li  a0, 0
+	li  a1, 0
+	li  a2, 0
+	jal entry
+1:
+	wfi
+	j 1b
+
+secondary:
+	// TODO: Multicore is not supported
+	wfi
+	j secondary
+	.cfi_endproc
