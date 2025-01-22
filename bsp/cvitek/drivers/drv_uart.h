@@ -18,6 +18,16 @@
 #include "mmio.h"
 
 #define UART_REG_SHIFT      0x2     /* Register Shift*/
+#ifdef SOC_TYPE_BM1690_AP
+#define UART_INPUT_CLK      250000000
+
+#define UART0_BASE          0x7030000000
+#define UART1_BASE          0x7030001000
+#define UART2_BASE          0x7030002000
+#define UART3_BASE          0x7030003000
+#define UART4_BASE          0x0
+
+#else
 #define UART_INPUT_CLK      25000000
 
 #define UART0_BASE          0x04140000
@@ -25,6 +35,7 @@
 #define UART2_BASE          0x04160000
 #define UART3_BASE          0x04170000
 #define UART4_BASE          0x041C0000
+#endif
 
 #define UART0_IRQ           (BSP_UART_IRQ_BASE + 0)
 #define UART1_IRQ           (BSP_UART_IRQ_BASE + 1)

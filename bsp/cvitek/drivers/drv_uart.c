@@ -111,6 +111,27 @@ static void dw8250_uart_setbrg(rt_ubase_t addr, int baud_divisor)
     dw8250_write32(addr, UART_LCR, lcr_val);
 }
 
+#ifdef SOC_TYPE_BM1690_AP
+#define NORMAL_MODE	0x0
+#define FAST_MODE	0x1
+#define SAFE_MODE	0x2
+#define BYPASS_MODE	0x3
+#define BOOT_SEL	0x7050000004
+#define MODE_SEL	0x7050000004
+static unsigned int uart_get_pclk(void)
+{
+	unsigned char mode = ((mmio_read_32(MODE_SEL) >> 8) & 0x3);
+
+	if (mode == NORMAL_MODE || mode == FAST_MODE)
+		return 500000000;
+
+	if (mode == SAFE_MODE)
+		return 250000000;
+
+	return 25000000;
+}
+#endif
+
 static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     rt_base_t base;
@@ -132,7 +153,12 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
     /* initialize serial config to 8N1 before writing baudrate */
     dw8250_write32(base, UART_LCR, UART_LCR_8N1);
 
+#ifdef SOC_TYPE_BM1690_AP
+    int uart_input_clk = uart_get_pclk();
+    clock_divisor = DIV_ROUND_CLOSEST(uart_input_clk, 16 * serial->config.baud_rate);
+#else
     clock_divisor = DIV_ROUND_CLOSEST(UART_INPUT_CLK, 16 * serial->config.baud_rate);
+#endif
     dw8250_uart_setbrg(base, clock_divisor);
 
     dw8250_write32(base, UART_IER, last_ier_state);
