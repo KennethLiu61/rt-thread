@@ -24,7 +24,7 @@ config BSP_USING_CV18XX
     select ARCH_REMAP_KERNEL if RT_USING_SMART
     default y
 
-config C906_PLIC_PHY_ADDR
+config C920_PLIC_PHY_ADDR
     hex
     default 0x6E00000000
 
@@ -73,7 +73,6 @@ choice
         bool "milkv-duo-spinor"
 
     config BOARD_TYPE_MILKV_DUO256M
-        select SOC_TYPE_SG2002
 		select SOC_TYPE_BM1690_AP
         bool "milkv-duo256m"
 
