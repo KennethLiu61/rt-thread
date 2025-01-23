@@ -453,6 +453,17 @@ static const char *pinname_whitelist_uart4_tx[] = {
 };
 #endif
 
+#elif defined(BOARD_TYPE_SOPHGO_BM1690_AP)
+#ifdef BSP_USING_UART0
+static const char *pinname_whitelist_uart0_rx[] = {
+    "UART0_RX",
+    NULL,
+};
+static const char *pinname_whitelist_uart0_tx[] = {
+    "UART0_TX",
+    NULL,
+};
+#endif
 #else
     #error "Unsupported board type!"
 #endif

@@ -10,7 +10,8 @@ source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
 rsource "board/Kconfig"
 
-config BSP_USING_CV18XX
+# 定义整个BSP形态
+config BSP_USING_SG2260
     bool
     select ARCH_RISCV64
     select ARCH_RISCV_FPU_D
@@ -30,59 +31,37 @@ config C920_PLIC_PHY_ADDR
 
 config IRQ_MAX_NR
     int
-    default 101
+    default 512
 
 config BSP_GPIO_IRQ_BASE
     int
-    default 60
-
-config BSP_SYS_GPIO_IRQ_BASE
-    int
-    default 70
+    default 26
 
 config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
 
-config SOC_TYPE_CV180X
-    bool
-    default n
-
-config SOC_TYPE_SG2000
-    bool
-    default n
-
-config SOC_TYPE_SG2002
-    bool
-    default n
-
+# 定义里面SOC对应的形态
 config SOC_TYPE_BM1690_AP
+    bool
+    default n
+
+config SOC_TYPE_BM1690_RP
+    bool
+    default n
+
+config SOC_TYPE_BM1690_TP
     bool
     default n
 
 choice
     prompt "Board Type"
-    default BOARD_TYPE_MILKV_DUO256M
+    default BOARD_TYPE_SOPHGO_BM1690_AP
 
-    config BOARD_TYPE_MILKV_DUO
-        select SOC_TYPE_CV180X
-        bool "milkv-duo"
-
-    config BOARD_TYPE_MILKV_DUO_SPINOR
-        select SOC_TYPE_CV180X
-        bool "milkv-duo-spinor"
-
-    config BOARD_TYPE_MILKV_DUO256M
+	#定义板卡形态，是AP/RP/TP
+    config BOARD_TYPE_SOPHGO_BM1690_AP
 		select SOC_TYPE_BM1690_AP
-        bool "milkv-duo256m"
-
-    config BOARD_TYPE_MILKV_DUO256M_SPINOR
-        select SOC_TYPE_SG2002
-        bool "milkv-duo256m-spinor"
-
-    config BOARD_TYPE_MILKV_DUOS
-        select SOC_TYPE_SG2000
-        bool "milkv-duos"
+        bool "sophgo BM1690 EVB for AP mode"
 
 endchoice
 

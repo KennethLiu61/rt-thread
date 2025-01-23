@@ -67,6 +67,8 @@
 #define TIMER_INTR_6 BSP_TIMER_IRQ_BASE + 2
 #define TIMER_INTR_7 BSP_TIMER_IRQ_BASE + 3
 
+#elif defined(BSP_USING_SG2260)
+#define TIMER_INTR_0 BSP_TIMER_IRQ_BASE + 0
 #else
 
 #error "Unsupported CPU type!"
