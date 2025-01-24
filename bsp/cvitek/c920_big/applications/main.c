@@ -21,23 +21,6 @@
 #define LED_PIN     "A29" /* Onboard LED pins */
 #endif
 
-#define set_csr(reg, bit) ({ unsigned long __tmp; \
-    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "rK"(bit)); \
-    __tmp; })
-
-#define clear_csr(reg, bit) ({ unsigned long __tmp; \
-    asm volatile ("csrrc %0, " #reg ", %1" : "=r"(__tmp) : "rK"(bit)); \
-    __tmp; })
-
-void riscv_v_enable(void)
-{
-	set_csr(sstatus, 0x600);
-}
-
-void riscv_v_disable(void)
-{
-	clear_csr(sstatus, 0x600);
-}
 uint64_t c920_riscv_gettime(void)
 {
     uint64_t time_elapsed;

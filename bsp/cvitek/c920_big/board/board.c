@@ -70,6 +70,40 @@ void primary_cpu_entry(void)
 #define IOREMAP_VEND 0ul
 #endif
 
+#ifdef ARCH_RISCV_VECTOR
+#include "vector_encoding.h"
+
+#define read_csr(reg) ({ unsigned long __tmp; \
+    asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+    __tmp; })
+
+#define write_csr(reg, val) ({ \
+    asm volatile ("csrw " #reg ", %0" :: "rK"(val)); })
+
+#define set_csr(reg, bit) ({ unsigned long __tmp; \
+    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "rK"(bit)); \
+    __tmp; })
+
+#define clear_csr(reg, bit) ({ unsigned long __tmp; \
+    asm volatile ("csrrc %0, " #reg ", %1" : "=r"(__tmp) : "rK"(bit)); \
+    __tmp; })
+
+void riscv_v_enable(void)
+{
+	set_csr(sstatus, SSTATUS_VS);
+}
+
+void riscv_v_disable(void)
+{
+	clear_csr(sstatus, SSTATUS_VS);
+}
+
+void read_sstatus(void)
+{
+    rt_kprintf("sstatus = 0x%lx\n",read_csr(sstatus));
+}
+#endif
+
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART

@@ -44,6 +44,7 @@ config __STACKSIZE__
 # 定义里面SOC对应的形态
 config SOC_TYPE_BM1690_AP
     bool
+    select ARCH_RISCV_VECTOR
     default n
 
 config SOC_TYPE_BM1690_RP
