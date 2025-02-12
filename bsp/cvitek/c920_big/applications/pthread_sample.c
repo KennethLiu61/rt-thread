@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
+extern void *rvv_memcpy(void* dest, const void* src, size_t n);
+
 /* 线程控制块 */
 static pthread_t tid1;
 static pthread_t tid2;
@@ -24,7 +26,7 @@ static void check_result(char* str,int result)
 static void* thread_entry(void* parameter)
 {
     int count = 0;
-    int no = (int) parameter; /* 获得线程的入口参数 */
+    int no = (uint64_t) parameter; /* 获得线程的入口参数 */
     char buf[30] = {0};
     char src_buf[30] = {0};
     rvv_memcpy(buf, tmp_buf, 10);
@@ -48,7 +50,7 @@ int rvv_test(void)
     int result;
 
     pthread_attr_t attr;
-    int stack_size = 0;
+    size_t stack_size = 0;
     pthread_attr_init(&attr);
     pthread_attr_getstacksize(&attr, &stack_size);
     printf("the stacksize = 0x%x\n", stack_size);

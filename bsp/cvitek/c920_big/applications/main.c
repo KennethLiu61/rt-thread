@@ -71,10 +71,11 @@ int main(void)
 		dlclose(handle);
 	}
 
-    while (1)
-    {
-        rt_thread_mdelay(1000);
-    }
+	daemon_main();
+	while (1)
+	{
+		rt_thread_mdelay(1000);
+	}
 
-    return 0;
+	return 0;
 }
