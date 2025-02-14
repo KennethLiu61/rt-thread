@@ -8,7 +8,7 @@ menu "General Drivers Configuration"
         if BSP_USING_UART
             config BSP_USING_UART0
                 bool "Enable UART 0"
-                default y
+                default y if SOC_TYPE_BM1690_AP
 
                 if BSP_USING_UART0
                     config BSP_UART0_RX_PINNAME
@@ -34,15 +34,15 @@ menu "General Drivers Configuration"
 
             config BSP_USING_UART2
                 bool "Enable UART 2"
-                default n
+                default y if SOC_TYPE_BM1690_TP
 
                 if BSP_USING_UART2
                     config BSP_UART2_RX_PINNAME
                         string "uart2 rx pin name"
-                        default ""
+                        default "UART2_RX"
                     config BSP_UART2_TX_PINNAME
                         string "uart2 tx pin name"
-                        default ""
+                        default "UART2_TX"
                 endif
 
             config BSP_USING_UART3
@@ -60,7 +60,8 @@ menu "General Drivers Configuration"
 
             config BSP_UART_IRQ_BASE
                 int
-                default 41
+                default 41 if SOC_TYPE_BM1690_AP
+                default 2 if SOC_TYPE_BM1690_TP
         endif
 
     menuconfig BSP_USING_WDT

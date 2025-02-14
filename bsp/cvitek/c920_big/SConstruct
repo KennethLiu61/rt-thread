@@ -42,6 +42,16 @@ stack_lds = open('link_stacksize.lds', 'w')
 if GetDepend('__STACKSIZE__'):
     stack_size = GetDepend('__STACKSIZE__')
 stack_lds.write('__STACKSIZE__ = %d;\n' % stack_size)
+
+if GetDepend('TOTAL_MEMORY'):
+    total_memory_str = GetDepend('TOTAL_MEMORY')
+    total_memory = int(total_memory_str, 0)
+stack_lds.write('TOTAL_MEMORY = 0x%x;\n' % total_memory)
+
+if GetDepend('C920_BOOT_ADDR'):
+    boot_addr_str = GetDepend('C920_BOOT_ADDR')
+    boot_addr = int(boot_addr_str, 0)
+stack_lds.write('C920_BOOT_ADDR = 0x%x;\n' % boot_addr)
 stack_lds.close()
 
 # make a building

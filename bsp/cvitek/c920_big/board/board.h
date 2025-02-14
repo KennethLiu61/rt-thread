@@ -19,7 +19,11 @@ extern unsigned int __bss_start;
 extern unsigned int __bss_end;
 
 #ifndef RT_USING_SMART
-#define KERNEL_VADDR_START 0x80200000
+#ifdef C920_BOOT_ADDR
+#define KERNEL_VADDR_START (C920_BOOT_ADDR)
+#else
+#error "you must define C920_BOOT_ADDR!!!"
+#endif
 #endif
 
 #define RT_HW_HEAP_BEGIN ((void *)&__bss_end)

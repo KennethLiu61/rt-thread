@@ -7,8 +7,8 @@ RTT_DIR := ../../..
 PKGS_DIR := packages
 
 source "$(RTT_DIR)/Kconfig"
-osource "$PKGS_DIR/Kconfig"
-rsource "board/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "board/Kconfig"
 
 # 定义整个BSP形态
 config BSP_USING_SG2260
@@ -27,7 +27,18 @@ config BSP_USING_SG2260
 
 config C920_PLIC_PHY_ADDR
     hex
-    default 0x6E00000000
+    default 0x6E00000000 if SOC_TYPE_BM1690_AP
+    default 0x690c800000 if SOC_TYPE_BM1690_TP
+
+config C920_BOOT_ADDR
+    hex
+    default 0x80200000 if SOC_TYPE_BM1690_AP && BOOT_TYPE_FROM_SOC
+    default 0x1EA0200000 if SOC_TYPE_BM1690_AP && BOOT_TYPE_FROM_PCIE
+    default 0x1F00200000 if SOC_TYPE_BM1690_TP
+
+config TOTAL_MEMORY
+    hex "total memory used"
+    default  0x2000000
 
 config IRQ_MAX_NR
     int
@@ -64,6 +75,20 @@ choice
 		select SOC_TYPE_BM1690_AP
         bool "sophgo BM1690 EVB for AP mode"
 
+    config BOARD_TYPE_SOPHGO_BM1690_TP
+		select SOC_TYPE_BM1690_TP
+        bool "sophgo BM1690 EVB for TP mode"
+endchoice
+
+choice
+	prompt "Boot Type"
+	default BOOT_TYPE_FROM_SOC
+
+	config BOOT_TYPE_FROM_SOC
+		bool "SOC mode"
+
+	config BOOT_TYPE_FROM_PCIE
+		bool "PCIe mode"
 endchoice
 
 choice BSP_ROOTFS_TYPE

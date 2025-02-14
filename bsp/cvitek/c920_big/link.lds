@@ -1,11 +1,10 @@
-/*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+/* * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020/12/12     bernard      The first version
+ * 2025/02/14     kenneth.liu  The first version
  */
 
 INCLUDE "link_stacksize.lds"
@@ -13,21 +12,21 @@ INCLUDE "link_stacksize.lds"
 OUTPUT_ARCH( "riscv" )
 
 /*
- * Memory layout:
- * 0x10200000 - 0x10201000: Bootloader
- * 0x10201000 - 0x10A00000: Kernel
- * 0x10A00000 - 0x11200000: Heap
+ * Memory layout(AP + SOC mode):
+ * 0x80000000 - 0x80080000: OpenSBI
+ * 0x80200000 - _bss_end: Kernel
+ * _bss_end - (0x80200000 + TOTAL_MEMORY): Heap
  */
 
 MEMORY
 {
-   SRAM : ORIGIN = 0x80200000, LENGTH = 32M
+   SRAM : ORIGIN = C920_BOOT_ADDR, LENGTH = TOTAL_MEMORY
 }
 
 ENTRY(_start)
 SECTIONS
 {
-    . = 0x80200000 ;
+    . = C920_BOOT_ADDR;
 
     /* __STACKSIZE__ = 4096; */
     __text_start = .;
