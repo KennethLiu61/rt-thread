@@ -472,7 +472,7 @@ const struct fselect pin_selects_array[][8] = {
 /* GPIO_ZQ          */ {FS_NONE,               FS_NONE,            FS_NONE,               {PWR_GPIO_24, 3},    {PWM_2, 4},        FS_NONE,           FS_NONE,                FS_NONE},
 };
 
-#elif defined(SOC_TYPE_BM1690_AP)
+#elif defined(SOC_TYPE_BM1690_AP) || defined(SOC_TYPE_BM1690_TP)
 struct fmux pinmux_array[] = {};
 const struct fselect pin_selects_array[][8] = {};
 #else

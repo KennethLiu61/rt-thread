@@ -18,7 +18,7 @@
 #include "mmio.h"
 
 #define UART_REG_SHIFT      0x2     /* Register Shift*/
-#ifdef SOC_TYPE_BM1690_AP
+#if defined(SOC_TYPE_BM1690_AP) || defined(SOC_TYPE_BM1690_TP)
 
 #define UART0_BASE          0x7030000000
 #define UART1_BASE          0x7030001000

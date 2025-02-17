@@ -111,7 +111,7 @@ static void dw8250_uart_setbrg(rt_ubase_t addr, int baud_divisor)
     dw8250_write32(addr, UART_LCR, lcr_val);
 }
 
-#ifdef SOC_TYPE_BM1690_AP
+#if defined(SOC_TYPE_BM1690_AP) || defined(SOC_TYPE_BM1690_TP)
 #define NORMAL_MODE	0x0
 #define FAST_MODE	0x1
 #define SAFE_MODE	0x2
@@ -153,7 +153,7 @@ static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct se
     /* initialize serial config to 8N1 before writing baudrate */
     dw8250_write32(base, UART_LCR, UART_LCR_8N1);
 
-#ifdef SOC_TYPE_BM1690_AP
+#if defined(SOC_TYPE_BM1690_AP) || defined(SOC_TYPE_BM1690_TP)
     int uart_input_clk = uart_get_pclk();
     clock_divisor = DIV_ROUND_CLOSEST(uart_input_clk, 16 * serial->config.baud_rate);
 #else
@@ -464,6 +464,27 @@ static const char *pinname_whitelist_uart0_tx[] = {
     NULL,
 };
 #endif
+#ifdef BSP_USING_UART2
+static const char *pinname_whitelist_uart2_rx[] = {
+    "UART2_RX",
+    NULL,
+};
+static const char *pinname_whitelist_uart2_tx[] = {
+    "UART2_TX",
+    NULL,
+};
+#endif
+#elif defined(BOARD_TYPE_SOPHGO_BM1690_TP)
+#ifdef BSP_USING_UART2
+static const char *pinname_whitelist_uart2_rx[] = {
+    "UART2_RX",
+    NULL,
+};
+static const char *pinname_whitelist_uart2_tx[] = {
+    "UART2_TX",
+    NULL,
+};
+#endif
 #else
     #error "Unsupported board type!"
 #endif
@@ -483,41 +504,33 @@ int rt_hw_uart_init(void)
     rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, &_serial##no, "uart" #no);
 
 #ifdef BSP_USING_UART0
-    pinmux_config(BSP_UART0_RX_PINNAME, UART0_RX, pinname_whitelist_uart0_rx);
-    pinmux_config(BSP_UART0_TX_PINNAME, UART0_TX, pinname_whitelist_uart0_tx);
+    // pinmux_config(BSP_UART0_RX_PINNAME, UART0_RX, pinname_whitelist_uart0_rx);
+    // pinmux_config(BSP_UART0_TX_PINNAME, UART0_TX, pinname_whitelist_uart0_tx);
     BSP_INSTALL_UART_DEVICE(0);
 
     uart->hw_base = (rt_ubase_t)DRV_IOREMAP((void*)uart->hw_base, 0x10000);
 #endif
 
 #ifdef BSP_USING_UART1
-    pinmux_config(BSP_UART1_RX_PINNAME, UART1_RX, pinname_whitelist_uart1_rx);
-    pinmux_config(BSP_UART1_TX_PINNAME, UART1_TX, pinname_whitelist_uart1_tx);
+    // pinmux_config(BSP_UART1_RX_PINNAME, UART1_RX, pinname_whitelist_uart1_rx);
+    // pinmux_config(BSP_UART1_TX_PINNAME, UART1_TX, pinname_whitelist_uart1_tx);
     BSP_INSTALL_UART_DEVICE(1);
 
     uart->hw_base = (rt_ubase_t)DRV_IOREMAP((void*)uart->hw_base, 0x10000);
 #endif
 
 #ifdef BSP_USING_UART2
-    pinmux_config(BSP_UART2_RX_PINNAME, UART2_RX, pinname_whitelist_uart2_rx);
-    pinmux_config(BSP_UART2_TX_PINNAME, UART2_TX, pinname_whitelist_uart2_tx);
+    // pinmux_config(BSP_UART2_RX_PINNAME, UART2_RX, pinname_whitelist_uart2_rx);
+    // pinmux_config(BSP_UART2_TX_PINNAME, UART2_TX, pinname_whitelist_uart2_tx);
     BSP_INSTALL_UART_DEVICE(2);
 
     uart->hw_base = (rt_ubase_t)DRV_IOREMAP((void*)uart->hw_base, 0x10000);
 #endif
 
 #ifdef BSP_USING_UART3
-    pinmux_config(BSP_UART3_RX_PINNAME, UART3_RX, pinname_whitelist_uart3_rx);
-    pinmux_config(BSP_UART3_TX_PINNAME, UART3_TX, pinname_whitelist_uart3_tx);
+    // pinmux_config(BSP_UART3_RX_PINNAME, UART3_RX, pinname_whitelist_uart3_rx);
+    // pinmux_config(BSP_UART3_TX_PINNAME, UART3_TX, pinname_whitelist_uart3_tx);
     BSP_INSTALL_UART_DEVICE(3);
-
-    uart->hw_base = (rt_ubase_t)DRV_IOREMAP((void*)uart->hw_base, 0x10000);
-#endif
-
-#ifdef BSP_USING_UART4
-    pinmux_config(BSP_UART4_RX_PINNAME, UART4_RX, pinname_whitelist_uart4_rx);
-    pinmux_config(BSP_UART4_TX_PINNAME, UART4_TX, pinname_whitelist_uart4_tx);
-    BSP_INSTALL_UART_DEVICE(4);
 
     uart->hw_base = (rt_ubase_t)DRV_IOREMAP((void*)uart->hw_base, 0x10000);
 #endif
