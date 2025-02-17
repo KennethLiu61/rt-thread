@@ -45,6 +45,7 @@ void *_malloc_r(struct _reent *ptr, size_t size)
 
     return result;
 }
+RTM_EXPORT(malloc);
 
 void *_realloc_r(struct _reent *ptr, void *old, size_t newlen)
 {
@@ -76,6 +77,7 @@ void _free_r(struct _reent *ptr, void *addr)
 {
     rt_free(addr);
 }
+RTM_EXPORT(free);
 
 #else
 void *_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
