@@ -29,14 +29,22 @@ static void* thread_entry(void* parameter)
     int no = (uint64_t) parameter; /* 获得线程的入口参数 */
     char buf[30] = {0};
     char src_buf[30] = {0};
+#ifdef CONFIG_ARCH_RISCV_VECTOR
     rvv_memcpy(buf, tmp_buf, 10);
+#else
+	memcpy(buf, tmp_buf, 10);
+#endif
     rt_kprintf("[%d]buf = %s\n", no, buf);
 
     while (count <= 5)
     {
         /* 打印输出线程计数值 */
         sprintf(src_buf, "thread%d count: %d\n", no, count ++);
+#ifdef CONFIG_ARCH_RISCV_VECTOR
         rvv_memcpy(buf, src_buf, sizeof(src_buf));
+#else
+        memcpy(buf, src_buf, sizeof(src_buf));
+#endif
         printf("%s", buf);
 
         sleep(2);    /* 休眠 2 秒 */

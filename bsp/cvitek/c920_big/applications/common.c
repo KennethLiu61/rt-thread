@@ -1,5 +1,6 @@
 #include <rtthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 
 #include "common.h"
@@ -157,3 +158,12 @@ int tp_debug(const char *format, ...)
 
 	return ret;
 }
+RTM_EXPORT(tp_debug);
+
+//for musl toolchain
+void __assert_fail(const char *expr, const char *file, int line, const char *func)
+{
+    rt_kprintf("Assertion failed: %s (%s: %s: %d)\n", expr, file, func, line);
+    abort();
+}
+RTM_EXPORT(__assert_fail);

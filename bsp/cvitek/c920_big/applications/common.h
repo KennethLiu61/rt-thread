@@ -7,23 +7,28 @@
 #include "msp_list.h"
 #include "sys/time.h"
 
-#define pr_debug(format, ...) rt_kprintf(format, ##__VA_ARGS__)
-#define pr_err(format, ...)
+#define pr_debug(format, ...) rt_kprintf("DBG: "format, ##__VA_ARGS__)
+#define pr_err(format, ...) rt_kprintf("Error: "format, ##__VA_ARGS__)
 
 extern struct thread_item *cur_thread;
 
 #define TPU_CORE_ID			(cur_thread->tpu_id)
 
+static inline uint64_t c920_gettime(void)
+{
+    uint64_t time_elapsed;
+    __asm__ __volatile__(
+        "rdtime %0"
+        : "=r"(time_elapsed));
+    return time_elapsed;
+}
+
 #define get_time(time) \
-({	struct timespec now;\
-	clock_gettime(CLOCK_REALTIME, &now);\
-	time = now.tv_sec * 1000 * 1000 * 1000 + now.tv_nsec;\
+({	time = c920_gettime() / 50;\
 })
 
 #define time_simple() \
-({	struct timespec now;\
-	clock_gettime(CLOCK_REALTIME, &now);\
-	now.tv_sec * 1000 * 1000 * 1000 + now.tv_nsec;\
+({	c920_gettime() / 50;\
 })
 
 enum {

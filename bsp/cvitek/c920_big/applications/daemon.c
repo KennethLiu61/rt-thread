@@ -39,7 +39,7 @@ uint64_t bm1690_sync_time(void)
 	return timer_cur_val;
 }
 
-int daemon_main(void)
+void daemon_main(void* parameter)
 {
 	int ret;
 	uint32_t status_back = 0x0;
@@ -55,10 +55,11 @@ int daemon_main(void)
 	ret = vaddr_init();
 	if (ret != 0) {
 		pr_err("vaddr init error!\n");
-		return -1;
+		return;
 	}
 
 	cur_thread->tpu_id = sg_clint_read(CLINT_MHART_ID);
+	pr_debug("tpu_id = 0x%x\n", cur_thread->tpu_id);
 	tpu_init();
 
 	cur_thread->kernel_running = 0;
@@ -81,12 +82,15 @@ int daemon_main(void)
 
 	apb_timer = bm1690_sync_time();
 	get_time(start_time);
+	rt_kprintf("start_time = 0x%ld us\n", start_time);
 	fix_log_time(start_time);
 
 	config = (struct tp_config *)sg_get_base_addr();
 	log_addr = (config->log_addr >> 4) << 4;
 	log_type = config->log_addr & 0xf;
 	log_memory_type = config->memory_type;
+	pr_debug("log_addr[0x%lx], log_type[0x%lx], log_memory_type[0x%lx]\n",
+			log_addr, log_type, log_memory_type);
 	log_init(log_addr + sg_clint_read(CLINT_MHART_ID) * 0x8000000, 0x8000000, log_type, log_memory_type);
 	share_memory = map_share_memory(config->share_memory_addr);
 	pr_debug("share memory:0x%lx -> 0x%lx\n", config->share_memory_addr, share_memory);
@@ -97,9 +101,24 @@ int daemon_main(void)
 	// tp_debug("apb timer val:0x%lx, arch timer:0x%lx\n", apb_timer, start_time);
 	tp_status_init(cur_thread);
 
-	while (1)
+	while (1) {
 		msgfifo_process();
+		rt_thread_mdelay(1);
+	}
 
 	free(cur_thread);
+	return;
+}
+
+int tpu_daemon_run(void)
+{
+	rt_thread_t tid = RT_NULL;
+	tid = rt_thread_create("tp_daemon",
+	daemon_main, NULL,
+	RT_MAIN_THREAD_STACK_SIZE,
+	RT_MAIN_THREAD_PRIORITY, 20);
+	if(tid != NULL)
+		rt_thread_startup(tid);
+
 	return 0;
 }

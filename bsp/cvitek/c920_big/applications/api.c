@@ -27,14 +27,11 @@ static inline const char *workdir(void)
 	return "/tmp";
 }
 
-// #define removedir(path) nftw(path, removefn, 10, FTW_DEPTH|FTW_MOUNT|FTW_PHYS)
-// #define removedir(path) ftw(path, removefn, 10)
 #define sprintfcat(var, ...) snprintf(var + strlen(var), sizeof(var) - strlen(var), __VA_ARGS__)
 
 int find_sym_by_name(struct lib_info *lib, unsigned char name[], char **pfunc)
 {
 	void *tmp;
-	char *error;
 	struct func_record func_record, *p_func_record;
 
 	pr_debug("%s: func_name: %s\n", __func__, name);
@@ -51,9 +48,8 @@ int find_sym_by_name(struct lib_info *lib, unsigned char name[], char **pfunc)
 	}
 
 	tmp = dlsym(lib->handle, (char *)name);
-	error = (char *)dlerror();
-	if (error) {
-		pr_err("find function %s in module error happened: %s\n", name, error);
+	if (!tmp) {
+		pr_err("find function %s in module error!\n", name);
 		return -1;
 	}
 	*pfunc = (char *)tmp;
@@ -107,32 +103,6 @@ int load_lib_process(struct task_item *task_item)
 
 	strncpy(local_file, workdir(), sizeof(local_file));
 
-	if (stat(local_file, &st) == -1)
-		if (mkdir(local_file, 0777) != 0) {
-			pr_err("mkdir %s error! %s\n", local_file, strerror(errno));
-			return -1;
-		}
-
-	ret = sprintfcat(local_file, "/%d-%d", getpid(), cur_thread->tpu_id);
-	if (ret < 0)
-		pr_err("snprintf failed\n");
-
-	if (stat(local_file, &st) == -1)
-		if (mkdir(local_file, 0777) != 0) {
-			pr_err("mkdir %s error! %s\n", local_file, strerror(errno));
-			return -1;
-		}
-
-	ret = sprintfcat(local_file, "/%d", load_module->cur_rec);
-	if (ret < 0)
-		pr_err("snprintf failed\n");
-
-	if (stat(local_file, &st) == -1)
-		if (mkdir(local_file, 0777) != 0) {
-			pr_err("mkdir %s error! %s\n", local_file, strerror(errno));
-			return -1;
-		}
-
 	ret = sprintfcat(local_file, "/%s", load_module->library_name);
 	if (ret < 0)
 		pr_err("snprintf failed\n");
@@ -156,9 +126,8 @@ int load_lib_process(struct task_item *task_item)
 		(struct library_item *)malloc(sizeof(struct library_item));
 
 	ptr_lib_item->lib.handle = dlopen(local_file, RTLD_LOCAL  | RTLD_NOW);
-	error = (char *)dlerror();
-	if (error) {
-		pr_err("dlopen error happened: %s\n", error);
+	if (!(ptr_lib_item->lib.handle)) {
+		pr_err("dlopen  %s error!\n", local_file);
 		return -1;
 	}
 
@@ -235,8 +204,7 @@ int unload_lib_process(struct task_item *task_item)
 		}
 	}
 
-	sprintf(local_file, "%s/%d-%d", workdir(), getpid(), cur_thread->tpu_id);
-	// ret = removedir(local_file);
+	sprintf(local_file, "%s/%s", workdir(), load_module->library_name);
 	ret = remove(local_file);
 	if (ret != 0)
 		pr_err("failed to remove dir %s!\n", local_file);

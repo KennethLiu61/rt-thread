@@ -18,11 +18,11 @@ static void enable_l2m(void)
 	uint32_t reg;
 
 	for (int i = 0; i < MAX_TPU_NUM; i++) {
-		addr = i * CORE_OFFSET + TPU_SYS_L2M_CFG_CTRL_OFFSET;
+		addr = TPU_SYS_REG_BASE_ADDR + i * CORE_OFFSET + TPU_SYS_L2M_CFG_CTRL_OFFSET;
 		reg = sg_tpu_sys_read(addr);
 		sg_tpu_sys_write(addr, reg | 0x1);
 
-		addr = i * CORE_OFFSET + TPU_SYS_HNF_L2M_CTRL_OFFSET;
+		addr = TPU_SYS_REG_BASE_ADDR + i * CORE_OFFSET + TPU_SYS_HNF_L2M_CTRL_OFFSET;
 		reg = sg_tpu_sys_read(addr);
 		sg_tpu_sys_write(addr, reg | 0xe);
 	}

@@ -19,6 +19,7 @@ void vaddr_destroy(void);
 
 void *sg_get_base_addr(void);
 void *map_share_memory(uint64_t pa);
+void *map_to_kaddr(unsigned long long addr);
 
 uint32_t sg_read(unsigned long long addr);
 void sg_write(unsigned long long addr, unsigned int val);

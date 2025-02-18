@@ -37,6 +37,7 @@ void get_tpu_groupset_info(struct tpu_groupset_info *ptr_groupset_info)
 	ptr_groupset_info->group_id = cur_task->task.task_header.request_cc_info.group_id;
 	ptr_groupset_info->block_id = cur_task->task.task_header.request_cc_info.block_id;
 }
+RTM_EXPORT(get_tpu_groupset_info);
 
 void poll_cur_task_enable(void)
 {
@@ -88,6 +89,7 @@ void write_response(int result)
 	free(cur_task);
 	free(task_response);
 }
+RTM_EXPORT(write_response);
 
 int get_c2c_dev_num(void)
 {

@@ -37,16 +37,17 @@ int main(void)
 #else
     rt_kprintf("Hello RISC-V!\n");
 #endif
+	rt_kprintf("start time: %ld\n", c920_riscv_gettime());
 
 	void *handle;
 	void (*hello_func)() = NULL;
 	int (*add_func)(int, int) = NULL;
-	handle = dlopen("/lib.so", RTLD_LAZY);
+	handle = dlopen("/libtest.so", RTLD_LAZY);
 	if(!handle) {
-		rt_kprintf("dlopen failed! /lib.so \n");
-		handle = dlopen("lib.so", RTLD_LAZY);
+		rt_kprintf("dlopen failed! /libtest.so \n");
+		handle = dlopen("libtest.so", RTLD_LAZY);
 		if(!handle)
-			rt_kprintf("dlopen failed! lib.so \n");
+			rt_kprintf("dlopen failed! libtest.so \n");
 	} 
 
 	if(handle){
@@ -66,12 +67,13 @@ int main(void)
 			int value = add_func(12, 34);
 			rt_kprintf("add_func: value = %d\n", value);
 		}
-
 		// 关闭库
 		dlclose(handle);
 	}
 
-	daemon_main();
+	// daemon_main();
+	extern int tpu_daemon_run(void);
+	tpu_daemon_run();
 	while (1)
 	{
 		rt_thread_mdelay(1000);
