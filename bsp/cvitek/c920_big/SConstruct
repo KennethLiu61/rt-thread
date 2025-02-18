@@ -7,7 +7,7 @@ from rtconfig import RTT_ROOT
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
-TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+TARGET = 'ap_Image.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
@@ -53,6 +53,15 @@ if GetDepend('C920_BOOT_ADDR'):
     boot_addr = int(boot_addr_str, 0)
 stack_lds.write('C920_BOOT_ADDR = 0x%x;\n' % boot_addr)
 stack_lds.close()
+
+# 获取 TPU_INDEX 的值
+if GetDepend('SOC_TYPE_BM1690_TP'):
+    tpu_index = GetDepend('TPU_INDEX')
+    tpu_index = 0 if tpu_index in (False, None) else int(tpu_index)
+    print("[INFO] TPU_INDEX = ", tpu_index)
+    # 动态生成目标文件名
+    target_ext = rtconfig.TARGET_EXT
+    TARGET = f"tp_Image_{tpu_index}.{target_ext}"
 
 # make a building
 DoBuilding(TARGET, objs)

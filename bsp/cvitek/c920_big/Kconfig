@@ -30,11 +30,28 @@ config C920_PLIC_PHY_ADDR
     default 0x6E00000000 if SOC_TYPE_BM1690_AP
     default 0x690c800000 if SOC_TYPE_BM1690_TP
 
+# 添加 TPU_INDEX 配置项
+config TPU_INDEX
+    int "TPU index(0: default )"
+    depends on SOC_TYPE_BM1690_TP
+    range 0 7
+    default 0
+    help
+      Select the TPU number to adjust the boot address.
+      TPU_FW_OFFSET is 0x20000000ULL
+
 config C920_BOOT_ADDR
     hex
     default 0x80200000 if SOC_TYPE_BM1690_AP && BOOT_TYPE_FROM_SOC
     default 0x1EA0200000 if SOC_TYPE_BM1690_AP && BOOT_TYPE_FROM_PCIE
-    default 0x1F00200000 if SOC_TYPE_BM1690_TP
+    default 0x1F00200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 0
+    default 0x1F20200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 1
+    default 0x1F40200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 2
+    default 0x1F60200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 3
+    default 0x1F80200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 4
+    default 0x1FA0200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 5
+    default 0x1FC0200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 6
+    default 0x1FE0200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 7
 
 config TOTAL_MEMORY
     hex "total memory used"

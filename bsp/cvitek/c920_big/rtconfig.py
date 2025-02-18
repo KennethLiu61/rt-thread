@@ -59,7 +59,7 @@ if PLATFORM == 'gcc':
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtthread.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET Image \n' + SIZE + ' $TARGET \n'
-#POST_ACTION += 'cd .. && bash mksdimg.sh ' + os.getcwd() + ' Image \n'
+POST_ACTION += "echo '$TARGET' | awk -F '.' '{print $1}' | xargs -I {} cp -v Image {} \n"
 POST_ACTION += OBJDUMP + ' -D -S $TARGET > rtthread.asm\n'
 
 M_CFLAGS = CFLAGS + ' -fPIC '
