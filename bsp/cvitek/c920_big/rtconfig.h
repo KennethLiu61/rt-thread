@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -119,7 +119,7 @@
 #define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
-#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_CONSOLE_DEVICE_NAME "uart2"
 #define RT_VER_NUM 0x50200
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
@@ -129,8 +129,6 @@
 #define ARCH_MM_MMU
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
-#define ARCH_RISCV_VECTOR
-#define ARCH_VECTOR_VLEN_128
 #define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
 #define ARCH_USING_NEW_CTX_SWITCH
@@ -460,18 +458,22 @@
 /* General Drivers Configuration */
 
 #define BSP_USING_UART
-#define BSP_USING_UART0
-#define BSP_UART0_RX_PINNAME "UART0_RX"
-#define BSP_UART0_TX_PINNAME "UART0_TX"
-#define BSP_UART_IRQ_BASE 41
+#define BSP_USING_UART2
+#define BSP_UART2_RX_PINNAME "UART2_RX"
+#define BSP_UART2_TX_PINNAME "UART2_TX"
+#define BSP_UART_IRQ_BASE 2
 /* end of General Drivers Configuration */
 #define BSP_USING_SG2260
-#define C920_PLIC_PHY_ADDR 0x6E00000000
+#define C920_PLIC_PHY_ADDR 0x690c800000
+#define TPU_INDEX 0
+#define C920_BOOT_ADDR 0x1F00200000
+#define TOTAL_MEMORY 0x2000000
 #define IRQ_MAX_NR 512
 #define BSP_GPIO_IRQ_BASE 26
 #define __STACKSIZE__ 8192
-#define SOC_TYPE_BM1690_AP
-#define BOARD_TYPE_SOPHGO_BM1690_AP
+#define SOC_TYPE_BM1690_TP
+#define BOARD_TYPE_SOPHGO_BM1690_TP
+#define BOOT_TYPE_FROM_SOC
 #define BSP_ROOTFS_TYPE_ROMFS
 
 #endif

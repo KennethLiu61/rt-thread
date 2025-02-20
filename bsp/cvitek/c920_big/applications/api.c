@@ -185,7 +185,7 @@ int unload_lib_process(struct task_item *task_item)
 			} else
 				pr_err("%s: find_sym_by_name: tpu_kernel_deinit failed, ret = %d\n", __func__, ret);
 			ret = dlclose(((struct library_item *)pos_lib)->lib.handle);
-			if (ret)
+			if (ret != RT_TRUE)
 				pr_err("dlclose error!\n");
 
 			struct func_record *tmp_func_record, *p_func_record;

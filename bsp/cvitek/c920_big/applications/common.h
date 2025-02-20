@@ -7,7 +7,7 @@
 #include "msp_list.h"
 #include "sys/time.h"
 
-#define pr_debug(format, ...) rt_kprintf("DBG: "format, ##__VA_ARGS__)
+#define pr_debug(format, ...) //rt_kprintf("DBG: "format, ##__VA_ARGS__)
 #define pr_err(format, ...) rt_kprintf("Error: "format, ##__VA_ARGS__)
 
 extern struct thread_item *cur_thread;
@@ -23,12 +23,14 @@ static inline uint64_t c920_gettime(void)
     return time_elapsed;
 }
 
+// c920_gettime()/50MHz = n S; n S * 1000 * 1000 * 1000 = n NS
 #define get_time(time) \
-({	time = c920_gettime() / 50;\
+({	time = c920_gettime() * 20;\
 })
 
+//return ns
 #define time_simple() \
-({	c920_gettime() / 50;\
+({	c920_gettime() * 20;\
 })
 
 enum {

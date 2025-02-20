@@ -104,6 +104,7 @@ void daemon_main(void* parameter)
 	while (1) {
 		msgfifo_process();
 		rt_thread_mdelay(1);
+		// rt_thread_delay(100000);	//2000us	//实测居然是2s
 	}
 
 	free(cur_thread);

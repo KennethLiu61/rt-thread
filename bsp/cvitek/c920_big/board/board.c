@@ -128,6 +128,7 @@ void rt_hw_board_init(void)
     /* init rtthread hardware */
     rt_hw_tick_init();
 
+#if defined(SOC_TYPE_BM1690_AP) || (TPU_INDEX == 0)
 #ifdef RT_USING_SERIAL
     rt_hw_uart_init();
 #endif
@@ -136,6 +137,7 @@ void rt_hw_board_init(void)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif /* RT_USING_CONSOLE */
+#endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
