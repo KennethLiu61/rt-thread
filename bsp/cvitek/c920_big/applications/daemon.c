@@ -5,6 +5,15 @@
 #include "tpu.h"
 #include "msgfifo.h"
 
+// 因为TPU1-7不使能UART，所以tshell线程会一直死循环，释放不出调度；所以需要让
+// tp_daemon线程的优先级高于tshell；
+// 而TPU0可以用于调试，所以tp_daemon优先级要低于tshell才能使用命令行功能
+#if defined(SOC_TYPE_BM1690_AP) || (TPU_INDEX == 0)
+#define TP_DAEMON_THREAD_PRIORITY FINSH_THREAD_PRIORITY + 1
+#else
+#define TP_DAEMON_THREAD_PRIORITY RT_MAIN_THREAD_PRIORITY + 1
+#endif
+
 #define BM1690_TIMER_CUR_VAL	0x4
 #define BM1690_TIMER_INT_STATUS	0xa8
 
@@ -82,7 +91,7 @@ void daemon_main(void* parameter)
 
 	apb_timer = bm1690_sync_time();
 	get_time(start_time);
-	rt_kprintf("start_time = 0x%ld us\n", start_time);
+	rt_kprintf("start_time = %ld ns\n", start_time);
 	fix_log_time(start_time);
 
 	config = (struct tp_config *)sg_get_base_addr();
@@ -103,8 +112,7 @@ void daemon_main(void* parameter)
 
 	while (1) {
 		msgfifo_process();
-		rt_thread_mdelay(1);
-		// rt_thread_delay(100000);	//2000us	//实测居然是2s
+		// rt_thread_mdelay(1);
 	}
 
 	free(cur_thread);
@@ -117,7 +125,7 @@ int tpu_daemon_run(void)
 	tid = rt_thread_create("tp_daemon",
 	daemon_main, NULL,
 	RT_MAIN_THREAD_STACK_SIZE,
-	RT_MAIN_THREAD_PRIORITY, 20);
+	TP_DAEMON_THREAD_PRIORITY, 20);
 	if(tid != NULL)
 		rt_thread_startup(tid);
 
