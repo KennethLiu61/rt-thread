@@ -25,11 +25,6 @@ config BSP_USING_SG2260
     select ARCH_REMAP_KERNEL if RT_USING_SMART
     default y
 
-config C920_PLIC_PHY_ADDR
-    hex
-    default 0x6E00000000 if SOC_TYPE_BM1690_AP
-    default 0x690c800000 if SOC_TYPE_BM1690_TP
-
 # 添加 TPU_INDEX 配置项
 config TPU_INDEX
     int "TPU index(0: default )"
@@ -39,6 +34,18 @@ config TPU_INDEX
     help
       Select the TPU number to adjust the boot address.
       TPU_FW_OFFSET is 0x20000000ULL
+
+config C920_PLIC_PHY_ADDR
+    hex
+    default 0x6E00000000 if SOC_TYPE_BM1690_AP
+    default 0x690C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 0
+    default 0x691C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 1
+    default 0x692C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 2
+    default 0x693C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 3
+    default 0x694C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 4
+    default 0x695C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 5
+    default 0x696C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 6
+    default 0x697C800000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 7
 
 config C920_BOOT_ADDR
     hex
