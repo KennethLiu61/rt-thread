@@ -10,10 +10,10 @@
 */
 
 .text
-.global newlib_memset
-.type	newlib_memset, @function
+.global asm_memset
+.type	asm_memset, @function
 .align  2
-newlib_memset:
+asm_memset:
 #if defined(PREFER_SIZE_OVER_SPEED) || defined(__OPTIMIZE_SIZE__)
   mv t1, a0
   beqz a2, 2f
@@ -111,4 +111,4 @@ newlib_memset:
   bleu a2, t1, .Ltiny
   j .Laligned
 #endif
-  .size	newlib_memset, .-newlib_memset
+  .size	asm_memset, .-asm_memset

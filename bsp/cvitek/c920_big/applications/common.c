@@ -127,7 +127,7 @@ int log_init(uint64_t start_addr, uint64_t len, int type, int memory_type)
 		tp_log.record_len = 0;
 
 		get_time(time1);
-		memset(tp_log.addr + 4096, 0x0, 0x1000);
+		asm_memset(tp_log.addr + 4096, 0x0, 0x1000);
 		get_time(time2);
 		tp_debug("clean 4K use %lu ns\n", time2 - time1);
 	} else if (type == LOG_UART) {
@@ -149,7 +149,7 @@ int fix_log_time(uint64_t delate_time)
 
 int tp_debug(const char *format, ...)
 {
-	int ret;
+	int ret = 0;
 	va_list args;
 
 	va_start(args, format);

@@ -181,15 +181,15 @@ void sg_msgfifo_rx_read_bytes(uint32_t offset, uint8_t *buf, uint32_t len)
 	if (left_sized >= len) {
 		// rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *)(g_drv_shmem_handle + addr), len);
 		invalidate_dcache_range((void *)(g_drv_shmem_handle + addr), len);
-		memcpy(buf, (void *)(g_drv_shmem_handle + addr), len);
+		optimize_memcpy(buf, (void *)(g_drv_shmem_handle + addr), len);
 	} else {
 		// rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *)(g_drv_shmem_handle + addr), left_sized);
 		// rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE,
 		// 					(void *)(g_drv_shmem_handle + MSG_FIFO_RX_BASE_OFFSET), (len - left_sized));
 		invalidate_dcache_range((void *)(g_drv_shmem_handle + addr), left_sized);
 		invalidate_dcache_range((void *)(g_drv_shmem_handle + MSG_FIFO_RX_BASE_OFFSET), (len - left_sized));
-		memcpy(buf, (void *)(g_drv_shmem_handle + addr), left_sized);
-		memcpy(buf + left_sized, (void *)(g_drv_shmem_handle + MSG_FIFO_RX_BASE_OFFSET), len - left_sized);
+		optimize_memcpy(buf, (void *)(g_drv_shmem_handle + addr), left_sized);
+		optimize_memcpy(buf + left_sized, (void *)(g_drv_shmem_handle + MSG_FIFO_RX_BASE_OFFSET), len - left_sized);
 	}
 }
 
@@ -206,8 +206,8 @@ void sg_msgfifo_tx_response(struct task_response *task_response)
 		asm volatile("fence iorw, iorw" ::);
 		sg_shmem_write(MSG_FIFO_TX_WP_OFFSET, current_wp + sizeof(struct task_response));
 	} else {
-		memcpy((void *)(g_drv_shmem_handle + addr), task_response, left_size);
-		memcpy((void *)(g_drv_shmem_handle + MSG_FIFO_TX_BASE_OFFSET),
+		optimize_memcpy((void *)(g_drv_shmem_handle + addr), task_response, left_size);
+		optimize_memcpy((void *)(g_drv_shmem_handle + MSG_FIFO_TX_BASE_OFFSET),
 			(uint8_t *)task_response + left_size,
 			sizeof(struct task_response) - left_size);
 		// rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)(g_drv_shmem_handle + addr), left_size);
@@ -230,6 +230,6 @@ uint32_t sg_clint_read(uint64_t addr)
 
 void sg_sram_read(uint32_t offset, uint32_t size, uint8_t *buf)
 {
-	memcpy(buf, (void *)(g_drv_sram_handle + offset), size);
+	optimize_memcpy(buf, (void *)(g_drv_sram_handle + offset), size);
 }
 

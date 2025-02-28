@@ -36,9 +36,9 @@ int find_sym_by_name(struct lib_info *lib, unsigned char name[], char **pfunc)
 
 	pr_debug("%s: func_name: %s\n", __func__, name);
 
-	memset(&func_record, 0, sizeof(struct func_record));
-	memcpy(func_record.f_item.func_name, name, FUNC_MAX_NAME_LEN);
-	memcpy(func_record.f_item.lib_md5, lib->md5, MD5SUM_LEN);
+	asm_memset(&func_record, 0, sizeof(struct func_record));
+	optimize_memcpy(func_record.f_item.func_name, name, FUNC_MAX_NAME_LEN);
+	optimize_memcpy(func_record.f_item.lib_md5, lib->md5, MD5SUM_LEN);
 
 	// first find in hashtable
 	HASH_FIND(hh, cur_thread->func_table, &func_record.f_item, sizeof(struct func_item), p_func_record);
@@ -56,9 +56,9 @@ int find_sym_by_name(struct lib_info *lib, unsigned char name[], char **pfunc)
 
 	// add to hashtable cur_thread->func_table
 	p_func_record = (struct func_record *)malloc(sizeof(struct func_record));
-	memset(p_func_record, 0, sizeof(struct func_record));
-	memcpy(p_func_record->f_item.func_name, name, FUNC_MAX_NAME_LEN);
-	memcpy(p_func_record->f_item.lib_md5, lib->md5, MD5SUM_LEN);
+	asm_memset(p_func_record, 0, sizeof(struct func_record));
+	optimize_memcpy(p_func_record->f_item.func_name, name, FUNC_MAX_NAME_LEN);
+	optimize_memcpy(p_func_record->f_item.lib_md5, lib->md5, MD5SUM_LEN);
 	p_func_record->f_ptr = tmp;
 	HASH_ADD(hh, cur_thread->func_table, f_item, sizeof(struct func_item), p_func_record);
 
@@ -131,8 +131,8 @@ int load_lib_process(struct task_item *task_item)
 		return -1;
 	}
 
-	memcpy(ptr_lib_item->lib.lib_name, load_module->library_name, LIB_MAX_NAME_LEN);
-	memcpy(ptr_lib_item->lib.md5, load_module->md5, MD5SUM_LEN);
+	optimize_memcpy(ptr_lib_item->lib.lib_name, load_module->library_name, LIB_MAX_NAME_LEN);
+	optimize_memcpy(ptr_lib_item->lib.md5, load_module->md5, MD5SUM_LEN);
 	list_add(&ptr_lib_item->list, &cur_thread->load_lib_list);
 
 	void (*tpu_func_ptr)(int core_id);

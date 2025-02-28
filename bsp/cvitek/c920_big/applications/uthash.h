@@ -82,7 +82,7 @@ do {                                                                            
 #define uthash_free(ptr,sz) free(ptr)     /* free fcn                        */
 #endif
 #ifndef uthash_bzero
-#define uthash_bzero(a,n) memset(a,'\0',n)
+#define uthash_bzero(a,n) asm_memset(a,'\0',n)
 #endif
 #ifndef uthash_strlen
 #define uthash_strlen(s) strlen(s)

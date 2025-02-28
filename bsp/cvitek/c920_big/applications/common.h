@@ -8,7 +8,10 @@
 #include "sys/time.h"
 
 #define pr_debug(format, ...) //rt_kprintf("DBG: "format, ##__VA_ARGS__)
-#define pr_err(format, ...) rt_kprintf("Error: "format, ##__VA_ARGS__)
+#define pr_err(format, ...) //rt_kprintf("Error: "format, ##__VA_ARGS__)
+
+extern void *optimize_memcpy(void *dest, const void *src, size_t count);
+extern void *asm_memset(void *src, int c, size_t n);
 
 extern struct thread_item *cur_thread;
 

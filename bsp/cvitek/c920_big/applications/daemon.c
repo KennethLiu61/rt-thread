@@ -55,7 +55,7 @@ void daemon_main(void* parameter)
 	uint32_t last_val = 0x0;
 
 	cur_thread = (struct thread_item *)malloc(sizeof(struct thread_item));
-	memset(cur_thread, 0, sizeof(struct thread_item));
+	asm_memset(cur_thread, 0, sizeof(struct thread_item));
 
 	INIT_LIST_HEAD(&cur_thread->load_lib_list);
 	INIT_LIST_HEAD(&cur_thread->task_list);

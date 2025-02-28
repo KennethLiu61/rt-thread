@@ -16,6 +16,8 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>          /* must after of DEBUG_ENABLE or some other options*/
 
+extern void *optimize_memcpy(void *dest, const void *src, size_t count);
+extern void *asm_memset(void *src, int c, size_t n);
 /**
  * @brief Load a shared object file into memory.
  *
@@ -127,12 +129,12 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     module->mem_size = module_size;
 
     /* zero all space */
-    rt_memset(module->mem_space, 0, module_size);
+    asm_memset(module->mem_space, 0, module_size);
     for (index = 0; index < elf_module->e_phnum; index++)
     {
         if (phdr[index].p_type == PT_LOAD)
         {
-            rt_memcpy(module->mem_space + phdr[index].p_vaddr - vstart_addr,
+            optimize_memcpy(module->mem_space + phdr[index].p_vaddr - vstart_addr,
                       (rt_uint8_t *)elf_module + phdr[index].p_offset,
                       phdr[index].p_filesz);
         }
