@@ -464,8 +464,8 @@
 #define BSP_UART_IRQ_BASE 2
 /* end of General Drivers Configuration */
 #define BSP_USING_SG2260
-#define C920_PLIC_PHY_ADDR 0x690c800000
 #define TPU_INDEX 0
+#define C920_PLIC_PHY_ADDR 0x690C800000
 #define C920_BOOT_ADDR 0x1F00200000
 #define TOTAL_MEMORY 0x2000000
 #define IRQ_MAX_NR 512

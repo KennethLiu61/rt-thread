@@ -25,7 +25,7 @@ if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
-CHIP_TYPE = 'cv180x'
+CHIP_TYPE = 'sg2260'
 
 if PLATFORM == 'gcc':
     # toolchains
