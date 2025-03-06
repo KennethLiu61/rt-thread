@@ -60,6 +60,18 @@ config C920_BOOT_ADDR
     default 0x1FC0200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 6
     default 0x1FE0200000 if SOC_TYPE_BM1690_TP && TPU_INDEX = 7
 
+config C920_TPU_SYS_ADDR
+    hex
+    depends on SOC_TYPE_BM1690_TP
+    default 0x6900000000 if TPU_INDEX = 0
+    default 0x6910000000 if TPU_INDEX = 1
+    default 0x6920000000 if TPU_INDEX = 2
+    default 0x6930000000 if TPU_INDEX = 3
+    default 0x6940000000 if TPU_INDEX = 4
+    default 0x6950000000 if TPU_INDEX = 5
+    default 0x6960000000 if TPU_INDEX = 6
+    default 0x6970000000 if TPU_INDEX = 7
+
 config TOTAL_MEMORY
     hex "total memory used"
     default  0x2000000

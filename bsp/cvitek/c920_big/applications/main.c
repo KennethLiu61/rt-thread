@@ -37,7 +37,6 @@ int main(void)
 #else
     rt_kprintf("Hello RISC-V!\n");
 #endif
-	rt_kprintf("start time: %ld\n", c920_riscv_gettime());
 
 	void *handle;
 	void (*hello_func)() = NULL;
@@ -74,6 +73,10 @@ int main(void)
 	// daemon_main();
 	extern int tpu_daemon_run(void);
 	tpu_daemon_run();
+
+	extern void msi_irq_init(void);
+	msi_irq_init();
+
 	while (1)
 	{
 		rt_thread_mdelay(1000);
