@@ -59,3 +59,17 @@ static void rt_mw(int argc, char**argv)
 }
 
 MSH_CMD_EXPORT(rt_mw, mmio write reg: rt_mw <addr>);
+
+static void rt_dump_reg(int argc, char**argv)
+{
+    if(argc != 3) {
+        rt_kprintf("rt_dump_reg <addr> <num>\n");
+    }
+    uint64_t addr = strtol(argv[1], NULL, 16);
+    uint32_t num = strtol(argv[2], NULL, 10);
+    for(int i = 0; i < num; i++) {
+        uint32_t reg = mmio_read_32(addr + i * 4);
+        rt_kprintf("0x%x: 0x%x\n", addr + i * 4, reg);
+    }
+}
+MSH_CMD_EXPORT(rt_dump_reg, mmio dump reg: rt_dump_reg <addr> <num>);
