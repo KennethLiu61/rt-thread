@@ -112,7 +112,7 @@ RTM_EXPORT(sg_tpu_sys_read);
 
 void sg_tpu_sys_write(uint64_t addr, uint32_t val)
 {
-	mmio_write_32(g_drv_tpusys_handle + addr, val - TPU_SYS_BASE_ADDR_PHYS);
+	mmio_write_32(g_drv_tpusys_handle + addr - TPU_SYS_BASE_ADDR_PHYS, val);
 }
 RTM_EXPORT(sg_tpu_sys_write);
 
@@ -227,6 +227,7 @@ uint32_t sg_clint_read(uint64_t addr)
 {
 	return mmio_read_32(g_drv_clint_handle + addr);
 }
+RTM_EXPORT(sg_clint_read);
 
 void sg_sram_read(uint32_t offset, uint32_t size, uint8_t *buf)
 {
