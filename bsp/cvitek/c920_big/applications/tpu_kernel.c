@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 
-#include "tpu_kernel.h"
+#include "runtime_tpu_kernel.h"
 
 #include <pthread.h>
 #include <stdio.h>

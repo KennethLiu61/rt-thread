@@ -7,7 +7,7 @@
 #include "msp_list.h"
 #include "common.h"
 #include "memmap.h"
-#include "tpu_kernel.h"
+#include "runtime_tpu_kernel.h"
 
 int initial_rp;
 
@@ -183,7 +183,7 @@ void msgfifo_task_handle(struct task_item *task_item)
 	if (task_item->task.task_header.task_type == SYNC_TASK) {
 		sync_id = (int)task_item->task.task_header.stream_id;
 		if (cur_thread->task_barrier) {
-			pr_debug("task:0x%lx barrier, sync id:%d, block num:0x%llx\n",
+			tp_debug("[barrier]task:0x%lx barrier, sync id:%d, block num:0x%llx\n",
 				task_item->task.task_header.task_id, sync_id,
 				task_item->task.task_header.block_num);
 			get_time(start_time);
@@ -191,9 +191,9 @@ void msgfifo_task_handle(struct task_item *task_item)
 			get_time(end_time);
 			cur_thread->kernel_exec_time += (end_time - start_time);
 			cur_thread->tp_status->kernel_exec_time = cur_thread->kernel_exec_time;
-			pr_debug("barrier exit\n");
+			tp_debug("barrier exit\n");
 		} else {
-			pr_debug("task:0x%lx barrier, sync id:%d, block num:0x%llx, no function\n",
+			tp_debug("[barrier]task:0x%lx barrier, sync id:%d, block num:0x%llx, no function\n",
 				task_item->task.task_header.task_id, sync_id,
 				task_item->task.task_header.block_num);
 		}
@@ -206,13 +206,21 @@ void msgfifo_task_handle(struct task_item *task_item)
 
 	if (task_item->task.task_header.task_type == POLL_ENGINE_DONE) {
 		if (cur_thread->poll_engine_done) {
-			pr_debug("tp poll\n");
+			tp_debug("[poll]task:0x%lx, %u/%lu\n",
+				task_item->task.task_header.task_id,
+				task_item->task.task_header.request_cc_info.block_id,
+				task_item->task.task_header.block_num);
 			get_time(start_time);
 			cur_thread->poll_engine_done();
 			get_time(end_time);
 			cur_thread->kernel_exec_time += (end_time - start_time);
 			cur_thread->tp_status->kernel_exec_time = cur_thread->kernel_exec_time;
-			pr_debug("poll done\n");
+			tp_debug("poll done\n");
+		} else {
+			tp_debug("[poll]task:0x%lx, %u/%lu, no function\n",
+				task_item->task.task_header.task_id,
+				task_item->task.task_header.request_cc_info.block_id,
+				task_item->task.task_header.block_num);
 		}
 
 		task_response.task_id = task_item->task.task_header.task_id;

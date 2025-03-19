@@ -9,7 +9,7 @@
 
 #include "api.h"
 #include "sg_io.h"
-#include "tpu_kernel.h"
+#include "runtime_tpu_kernel.h"
 #include "common.h"
 
 static int removefn(const char *pathname, const struct stat *sbuf, int type, struct FTW *ftwb)
@@ -22,7 +22,7 @@ static int removefn(const char *pathname, const struct stat *sbuf, int type, str
 	return ret;
 }
 
-static inline const char *workdir(void)
+static char *workdir(void)
 {
 	return "/tmp";
 }
@@ -78,7 +78,7 @@ int run_empty_kernel(void)
 
 int load_lib_process(struct task_item *task_item)
 {
-	char local_file[1024];
+	char local_file[1024] = {0};
 	struct stat st = {0};
 	uint8_t *map_vaddr;
 	char *error;
