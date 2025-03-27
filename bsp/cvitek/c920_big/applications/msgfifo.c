@@ -301,15 +301,16 @@ void msgfifo_process(void)
 			pr_err("msgfifo_read_task failed\n");
 			return;
 		}
+
+		list_for_each_safe(pos_task, tmp, &cur_thread->task_list) {
+			msgfifo_task_handle((struct task_item *)pos_task);
+			flag = 1;
+			get_time(cur_thread->end_time);
+			cur_thread->tp_alive_time += (cur_thread->end_time - cur_thread->start_time);
+			cur_thread->tp_status->tp_alive_time = cur_thread->tp_alive_time;
+		}
 	}
 
-	list_for_each_safe(pos_task, tmp, &cur_thread->task_list) {
-		msgfifo_task_handle((struct task_item *)pos_task);
-		flag = 1;
-		get_time(cur_thread->end_time);
-		cur_thread->tp_alive_time += (cur_thread->end_time - cur_thread->start_time);
-		cur_thread->tp_status->tp_alive_time = cur_thread->tp_alive_time;
-	}
 	if (flag)
 		pr_debug("list empty\n");
 

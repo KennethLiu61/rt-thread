@@ -135,18 +135,30 @@ int load_lib_process(struct task_item *task_item)
 	optimize_memcpy(ptr_lib_item->lib.md5, load_module->md5, MD5SUM_LEN);
 	list_add(&ptr_lib_item->list, &cur_thread->load_lib_list);
 
+	extern void tpu_kernel_init(int core_idx);
+	extern int tpu_core_barrier(int msg_id, int core_num);
+	extern void tpu_poll();
+
 	void (*tpu_func_ptr)(int core_id);
 
 	ret = find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_kernel_init", (char **)&tpu_func_ptr);
 	if (!ret) {
 		pr_debug("%s: before tpu_kernel_init\n", __func__);
+		//relocate tpu_kernel_init
+		tpu_func_ptr = tpu_kernel_init;
 		tpu_func_ptr(cur_thread->tpu_id);
 		pr_debug("%s: after tpu_kernel_init\n", __func__);
 	} else
 		pr_err("%s: find_sym_by_name: tpu_kernel_init failed, ret = %d\n", __func__, ret);
-
-	find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_core_barrier", (char **)&cur_thread->task_barrier);
-	find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_poll", (char **)&cur_thread->poll_engine_done);
+	
+	ret = find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_core_barrier", (char **)&cur_thread->task_barrier);
+	ret &= find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_poll", (char **)&cur_thread->poll_engine_done);
+	if (!ret) {
+		//relocate task_barrier
+		cur_thread->task_barrier = tpu_core_barrier;
+		//relocate poll_engine_done
+		cur_thread->poll_engine_done = tpu_poll;
+	}
 
 	return ret;
 }
@@ -214,7 +226,13 @@ int unload_lib_process(struct task_item *task_item)
 
 	return ret;
 }
-
+typedef struct {
+    uint32_t physical_core_id;
+    uint64_t group_num;
+    uint64_t workitem_num;
+    uint32_t group_id;
+    uint32_t workitem_id;
+} __attribute__((packed)) tpu_groupset_info_t;
 int launch_func_process(struct task_item *task_item)
 {
 	struct list_head *pos_lib;
@@ -252,6 +270,8 @@ int launch_func_process(struct task_item *task_item)
 			if (!ret) {
 				pr_debug("%s: before set_tpu_groupset_info\n", __func__);
 				tp_debug("find set tpu info\n");
+				void set_tpu_groupset_info( tpu_groupset_info_t *tpu_groupset);
+				set_tpu_info_func_ptr = set_tpu_groupset_info;
 				set_tpu_info_func_ptr(&groupset_info);
 				pr_debug("%s: after set_tpu_groupset_info\n", __func__);
 			} else
