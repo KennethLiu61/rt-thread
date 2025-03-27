@@ -1,6 +1,7 @@
 #ifndef FIRMWARE_COMMON_INLINE_H
 #define FIRMWARE_COMMON_INLINE_H
 
+#include <rtthread.h>
 #include "common.h"
 #include "gdma_reg_def.h"
 #include "bd_reg_def.h"

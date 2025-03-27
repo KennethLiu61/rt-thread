@@ -1,3 +1,4 @@
+#include <rtthread.h>
 #include "sg_fp16.h"
 #include "tpu_kernel.h"
 #include <limits.h>
@@ -211,3 +212,4 @@ scalar_t tpu_cast(
     else /* if (!is_dst_int && is_src_int) */
         return tpu_int_to_fp_cast(src, dst_dtype, src_dtype, convert_mode);
 }
+RTM_EXPORT(tpu_cast);

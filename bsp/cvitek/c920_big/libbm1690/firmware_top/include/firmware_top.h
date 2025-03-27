@@ -41,15 +41,15 @@ static inline void read128(uint64_t _addr, uint64_t _l64, uint64_t _h64) {
 }
 
 static inline void write128(uint64_t _addr, uint64_t _l64, uint64_t _h64) {
-#if defined(__riscv)
-    asm volatile ("sdd %0, %1, (%2), 0, 4"
-              :
-              : "r"(_l64), "r"(_h64), "r"(_addr));
-#else
+// #if defined(__riscv)
+//     asm volatile ("sdd %0, %1, (%2), 0, 4"
+//               :
+//               : "r"(_l64), "r"(_h64), "r"(_addr));
+// #else
     __uint128_t val = _h64;
     val = val << 64 | _l64;
     *(__uint128_t *)(_addr) = val;
-#endif
+// #endif
 }
 static inline void write32(uint64_t _addr, uint32_t value) {
 #if defined(__riscv)

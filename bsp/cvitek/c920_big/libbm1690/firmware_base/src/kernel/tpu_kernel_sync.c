@@ -1,3 +1,4 @@
+#include <rtthread.h>
 #include "config.h"
 #include "tpu_kernel_internel.h"
 #include "tpu_kernel.h"
@@ -121,6 +122,7 @@ void set_tpu_groupset_info(tpu_groupset_info_t *tpu_groupset) {
   int base_msg_id = calc_base_msg_id(g_core_context.core_msg_id);
   g_core_context.base_msg_id = base_msg_id;
 }
+RTM_EXPORT(set_tpu_groupset_info);
 
 int tpu_core_num() {
   return tpu_workitem_num();
@@ -139,8 +141,10 @@ int tpu_workitem_num() {
 }
 
 int tpu_workitem_index() {
+  rt_kprintf("### %s ###\n", __func__);
   return g_core_context.workitem_id;
 }
+RTM_EXPORT(tpu_workitem_index);
 
 int tpu_group_num() {
   return g_core_context.group_num;

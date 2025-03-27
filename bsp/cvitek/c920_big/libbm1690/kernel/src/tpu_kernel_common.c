@@ -1,3 +1,4 @@
+#include <rtthread.h>
 #include "tpu_kernel.h"
 #include <string.h>
 
@@ -288,6 +289,7 @@ void tpu_register_kernel_func(const char *name, tpu_kernel_func_t func) {
     // TPUKERNEL_LOG("TPUKernel register function %s\n", name);
 #endif
 }
+RTM_EXPORT(tpu_register_kernel_func);
 
 tpu_kernel_func_t tpu_get_kernel_func_by_name(const char *name) {
     func_pair_t *pairs = get_func_pairs();

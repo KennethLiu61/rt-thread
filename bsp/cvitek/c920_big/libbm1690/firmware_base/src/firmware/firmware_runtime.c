@@ -90,7 +90,7 @@ INLINE static sg_fw_status_t copy_message_from_sharemem(u32 *dst_msg_buf, u32 *r
     return SG_FW_SUCCESS;
 }
 #else
-#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+// #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
 INLINE static sg_fw_status_t copy_message_from_sharemem(u32 *dst_msg_buf, u32 *rp, sg_kapi_header_t *api_header) {
     u32 cur_rp = READ_SHARE_REG(SHARE_REG_MESSAGE_RP);
     *rp = cur_rp;

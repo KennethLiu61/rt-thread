@@ -1,8 +1,11 @@
+#include <rtthread.h>
 #include "tpu_kernel_internel.h"
 #include "atomic_sdma_gen_cmd.h"
 #include "cdma_reg_value.h"
 #include "base_def.h"
 #include "firmware_pmu.h"
+
+#define M_PI        3.14159265358979323846
 
 #define MAX_C2C_CDMA_NUM 6
 
@@ -268,7 +271,8 @@ __attribute__((weak)) void execute_defered_c2c();
 
 THREAD int no_recursive_polls_please;
 
-void tpu_initialize() {
+void tpu_initialize(void) {
+    rt_kprintf("### %s ###\n", __func__);
 #ifdef USING_CMODEL
     if (override_cmdid) return;
 #endif
@@ -294,6 +298,7 @@ void tpu_initialize() {
     if (!is_recursive)
         no_recursive_polls_please = 0;
 }
+RTM_EXPORT(tpu_initialize);
 
 void tpu_nop()
 {
@@ -451,6 +456,7 @@ void tpu_poll() {
     resync_cmd_id(&id_node);
 #endif
 }
+RTM_EXPORT(tpu_poll);
 
 void __attribute__((weak)) poll_cur_task_enable(void);
 void __attribute__((weak)) write_response(int result);
@@ -609,10 +615,14 @@ void tpu_vsdma_poll() {
 }
 
 void tpu_parallel_start() {
+    rt_kprintf("### %s ###\n", __func__);
     TPUKERNEL_ASSERT(!id_node.in_parallel_state);
     cmd_id_divide(&id_node, &bdc_id_node, &gdma_id_node);
 }
+RTM_EXPORT(tpu_parallel_start);
+
 void tpu_parallel_end() {
+    rt_kprintf("### %s ###\n", __func__);
     TPUKERNEL_ASSERT(id_node.in_parallel_state);
 #ifdef USING_SGDNN_BOTH_MESG_TEST
     tpu_sync_core();
@@ -627,6 +637,7 @@ void tpu_parallel_end() {
         resync_cmd_id(&id_node);
     }
 }
+RTM_EXPORT(tpu_parallel_end);
 bool tpu_is_parallel_state() {
     return id_node.in_parallel_state;
 }
@@ -764,6 +775,7 @@ void tpu_gdma_cpy_S2L(
         nidx += GDMA_MAX_N;
     }
 }
+RTM_EXPORT(tpu_gdma_cpy_S2L);
 void tpu_gdma_cpy_nc_trans_S2L(
     local_addr_t   dst_addr,
     system_addr_t  src_addr,
@@ -828,6 +840,7 @@ void tpu_gdma_cpy_nc_trans_S2L(
     }
     CHECK_GDMA_OVERFLOW;
 }
+RTM_EXPORT(tpu_gdma_cpy_nc_trans_S2L);
 void tpu_gdma_cpy_L2S(
     system_addr_t  dst_addr,
     local_addr_t   src_addr,
@@ -898,6 +911,7 @@ void tpu_gdma_cpy_L2S(
         nidx += GDMA_MAX_N;
     }
 }
+RTM_EXPORT(tpu_gdma_cpy_L2S);
 void tpu_gdma_cpy_nc_trans_L2S(
     system_addr_t  dst_addr,
     local_addr_t   src_addr,
@@ -3690,6 +3704,7 @@ TPU_BDC_FLOATING_POINT_BINARY_C(add, AR_ADD)
 TPU_BDC_FLOATING_POINT_BINARY_C(sub, AR_SUB)
 TPU_BDC_FLOATING_POINT_BINARY_C(mul, AR_MUL)
 TPU_BDC_FLOATING_POINT_BINARY_C(diff_abs, AR_FSUBABS)
+RTM_EXPORT(tpu_bdc_fp_add_C);
 void tpu_bdc_fp32_mac_C(
     local_addr_t  dst_addr,
     local_addr_t  src_addr,
@@ -3888,6 +3903,7 @@ void tpu_bdc_set_C(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_set_C);
 void tpu_bdc_cast(
     local_addr_t     dst_addr,
     local_addr_t     src_addr,
@@ -10546,6 +10562,7 @@ void tpu_bdc_load_fp_exp_coeff(local_addr_t coeff_addr, data_type_t dtype) {
         sfu_taylor_exp_len(dtype),
         dtype);
 }
+RTM_EXPORT(tpu_bdc_load_fp_exp_coeff);
 void tpu_bdc_load_fp_erf_coeff(local_addr_t coeff_addr, data_type_t dtype) {
     tpu_bdc_npu_bcast_from_static(
         coeff_addr,
