@@ -1,0 +1,29 @@
+#ifndef ENGINE_TYPE_H_
+#define ENGINE_TYPE_H_
+
+typedef enum {
+  ENGINE_BD   = 0,
+  ENGINE_GDMA = 1,
+  ENGINE_HAU = 2,
+  ENGINE_SDMA = 3,
+  ENGINE_CDMA = 4,
+  ENGINE_VSDMA = 5,
+  ENGINE_END
+} ENGINE_TYPE;
+
+typedef enum {
+  CDMA_PORT0 = 0,
+  CDMA_PORT1 = 1,
+  CDMA_PORT2 = 2,
+  CDMA_PORT3 = 3,
+  CDMA_PORT4 = 4,
+  CDMA_PORT5 = 5,
+  CDMA_PORT6 = 6,
+  CDMA_PORT7 = 7,
+  CDMA_PORT8 = 8,
+  CDMA_PORT9 = 9,
+  CDMA_PORT10 = 10,
+  CDMA_NUM
+} CDMA_PORT;
+
+#endif

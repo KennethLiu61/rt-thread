@@ -1,0 +1,89 @@
+#ifndef __MEMMAP_H__
+
+#define DEVICE_BASE	0x4000000000UL
+#define DEVICE_SIZE	(256UL * 1024 * 1024 * 1024)
+
+#define MEMORY_BASE	0x0UL
+#define MEMORY_SIZE	(256UL * 1024 * 1024 * 1024)
+
+// UART1
+#define UART_BASE	0x7030001000UL
+#define TBOX_FORMAT_OUT	0x7030000020UL
+
+#if defined(CONFIG_TARGET_PALLADIUM)
+
+#define UART_PCLK	153600
+#define UART_BAUDRATE	9600
+
+#elif defined(CONFIG_TARGET_ASIC)
+
+#define UART_PCLK	500000000
+#define UART_BAUDRATE	115200
+
+#else
+#error "no target specified"
+#endif
+
+#define EFUSE_BASE      0x27040000UL
+#define DRAM_BASE	0x40000000UL
+
+#define LOG_BUFFER_ADDR	(DRAM_BASE + 0xc00000)
+#define LOG_BUFFER_SIZE	(4 * 1024 * 1024)
+#define LOG_LINE_SIZE	512
+
+#define TOP_BASE			0x7050000000ULL
+
+#define SHARE_REG_BASE			(TOP_BASE + 0x1c0)
+#define SHARE_REG_MESSAGE_WP		0
+#define SHARE_REG_MESSAGE_RP		1
+#define SHARE_REG_FW_STATUS		9
+#define SHARE_REG_C920_FW_MODE		10
+#define SHARE_REG_C920_FW_LOG_RP       	11
+#define SHARE_REG_C920_FW_LOG_WP       	12
+
+#define C920_START_STEP_ENTER_MAIN        1
+#define C920_START_STEP_TIMER_INIT        2
+#define C920_START_STEP_MMU_INIT          3
+#define C920_START_STEP_FIQ_INIT          4
+#define C920_START_STEP_FIQ_INIT_DONE     41
+#define C920_START_STEP_FIQ_INIT_DOING    42
+#define C920_START_STEP_ENTER_BMDNN       5
+#define C920_START_STEP_GET_BAD_NPU       51
+#define C920_START_STEP_INIT_LOCAL_IRQ    52
+#define C920_START_STEP_I2C_SLAVE_INIT    53
+#define C920_START_STEP_PCIE_TABLE_INIT   54
+#define C920_START_STEP_UNMASK_ALL_INTC   55
+#define C920_START_STEP_TEST_FAILED       0x0B0B0B0B
+#define C920_START_STEP_TEST_SUCCEED      0x0A0A0A0A
+
+#define CLINT_BASE		0x6844000000ULL
+#define PLIC_BASE               (0x690c800000ULL + CONFIG_CORE_ID * 0x10000000)
+
+/* CLINT */
+#define CLINT_TIMECMPL0         (CLINT_BASE + 0x4000)
+#define CLINT_TIMECMPH0         (CLINT_BASE + 0x4004)
+
+#define CLINT_MTIME(cnt)             asm volatile("csrr %0, time\n" : "=r"(cnt) :: "memory");
+
+/* PLIC */
+#define PLIC_PRIORITY0          (PLIC_BASE + 0x0)
+#define PLIC_PRIORITY1          (PLIC_BASE + 0x4)
+#define PLIC_PRIORITY2          (PLIC_BASE + 0x8)
+#define PLIC_PRIORITY3          (PLIC_BASE + 0xc)
+#define PLIC_PRIORITY4          (PLIC_BASE + 0x10)
+
+#define PLIC_PENDING1           (PLIC_BASE + 0x1000)
+#define PLIC_PENDING2           (PLIC_BASE + 0x1004)
+#define PLIC_PENDING3           (PLIC_BASE + 0x1008)
+#define PLIC_PENDING4           (PLIC_BASE + 0x100C)
+
+#define PLIC_ENABLE1            (PLIC_BASE + 0x2000)
+#define PLIC_ENABLE2            (PLIC_BASE + 0x2004)
+#define PLIC_ENABLE3            (PLIC_BASE + 0x2008)
+#define PLIC_ENABLE4            (PLIC_BASE + 0x200C)
+
+#define PLIC_THRESHOLD          (PLIC_BASE + 0x200000)
+#define PLIC_CLAIM              (PLIC_BASE + 0x200004)
+
+
+#endif

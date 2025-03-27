@@ -1,0 +1,7 @@
+menu "TPU kernel lib"
+
+    menuconfig BM1690_LIB
+        bool "build libbm1690.a"
+        default y
+
+endmenu

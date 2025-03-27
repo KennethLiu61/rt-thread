@@ -1,0 +1,4 @@
+config DRIVER_SERIAL_TBOX
+	bool	"TBOX Serial Port Support"
+	help
+	tbox compatible serial port driver

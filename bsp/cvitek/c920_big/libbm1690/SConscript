@@ -1,0 +1,73 @@
+from building import *
+
+cwd     = GetCurrentDir()
+
+src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
+
+src += ['firmware_base/src/kernel/tpu_kernel.c']
+src += ['firmware_base/src/kernel/tpu_kernel_sync.c']
+src += ['firmware_base/src/kernel/tpu_common.c']
+
+src += ['firmware_base/src/atomic/atomic_sys_gen_cmd.c']
+src += ['firmware_base/src/atomic/atomic_gdma_gen_cmd.c']
+src += ['firmware_base/src/atomic/atomic_bc_gen_cmd.c']
+src += ['firmware_base/src/atomic/atomic_tensor_arithmetic_gen_cmd.c']
+
+src += ['firmware_base/src/fullnet/nodechip_multi_fullnet.c']
+
+src += ['firmware_base/src/firmware/firmware_runtime.c']
+src += ['firmware_base/src/firmware/firmware_common.c']
+src += ['firmware_base/src/firmware/firmware_profile.c']
+
+src += ['kernel/src/tpu_kernel_common.c']
+src += ['kernel/src/tpu_kernel_memcheck.c']
+
+
+CPPPATH = [cwd]
+CPPPATH += [cwd + r'/include/']
+CPPPATH += [cwd + r'/kernel/include/']
+CPPPATH += [cwd + r'/firmware_base/include/']
+CPPPATH += [cwd + r'/firmware_top/include/']
+
+CPPPATH += [cwd + r'/common/include/']
+CPPPATH += [cwd + r'/common/include/firmware/']
+CPPPATH += [cwd + r'/common/include/api/']
+
+CPPDEFINES = ['-D__sg2260__']
+
+CPPDEFINES += ['-DCONFIG_MAJOR_VERSION=1']
+CPPDEFINES += ['-DCONFIG_MINOR_VERSION=0']
+
+CPPDEFINES += ['-DCMODEL_CHIPID=0x2260']
+#########################################################
+# TPU Parameters
+#########################################################
+## Initialize parameters
+CPPDEFINES += ['-DCONFIG_NPU_SHIFT=6']
+
+CPPDEFINES += ['-DCONFIG_EU_SHIFT=4']
+CPPDEFINES += ['-DCONFIG_LOCAL_MEM_BANKS=16']
+CPPDEFINES += ['-DCONFIG_LOCAL_MEM_ADDRWIDTH=18']   # 256kB
+CPPDEFINES += ['-DCONFIG_L2_SRAM_SIZE=0x8000000']   # 128MB
+CPPDEFINES += ['-DCONFIG_STATIC_MEM_SIZE=0x10000']  # 64KB
+CPPDEFINES += ['-DCONFIG_GLOBAL_DATA_INITIAL=0xdeadbeef']
+CPPDEFINES += ['-DCONFIG_LOCAL_DATA_INITIAL=0xdeadbeef']
+CPPDEFINES += ['-DCONFIG_SMEM_DATA_INITIAL=0xdeadbeef']
+CPPDEFINES += ['-DCONFIG_GLOBAL_MEM_SIZE=0x100000000'] # 256MB
+CPPDEFINES += ['-DCONFIG_FW_SIZE=0x1800000'] # 24M
+CPPDEFINES += ['-DCONFIG_PLD_MULTI_TASK_DATA_SIZE=0x0']
+CPPDEFINES += ['-DCONFIG_PLD_K2K_CDMA_TEST_PORT=0X0']
+CPPDEFINES += ['-DCONFIG_MSG_ID_WIDTH=9']
+CPPDEFINES += ['-DCONFIG_DEBUG_CDMA_PORT=2']
+CPPDEFINES += ['-DCONFIG_MAX_TPU_CORE_NUM=8']
+CPPDEFINES += ['-DCONFIG_MAX_CDMA_NUM=11']
+
+CPPDEFINES += ['-DDISABLE_DENORM']
+CPPDEFINES += ['-DFAST_GEN_CMD']
+CPPDEFINES += ['-DSG_TV_GEN_DUMP_MASK']
+CPPDEFINES += ['-DUSING_INT_MSGFIFO']
+CPPDEFINES += ['-DUSING_L2']
+
+group = DefineGroup('Filesystem', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

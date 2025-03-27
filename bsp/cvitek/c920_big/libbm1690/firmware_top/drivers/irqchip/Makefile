@@ -1,0 +1,4 @@
+obj-$(CONFIG_DRIVER_IRQCHIP_GIC) += gic/
+obj-$(CONFIG_DRIVER_IRQCHIP_ICTL) += ictl/
+obj-$(CONFIG_DRIVER_IRQCHIP_INTC) += intc/
+obj-$(CONFIG_DRIVER_IRQCHIP_PLIC) += plic/
