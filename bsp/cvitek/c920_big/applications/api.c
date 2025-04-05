@@ -114,6 +114,7 @@ int load_lib_process(struct task_item *task_item)
 	}
 
 	pr_debug("%s: lib write to %s\n", __func__, local_file);
+	invalidate_dcache_range((void *)map_vaddr, (uint64_t)map_vaddr + load_module->size);
 	if (write(fd, map_vaddr, load_module->size) != load_module->size) {
 		perror(NULL);
 		pr_err("write file %s error! errno %s\n", local_file, strerror(errno));
