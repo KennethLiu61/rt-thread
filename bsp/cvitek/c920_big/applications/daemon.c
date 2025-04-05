@@ -14,6 +14,8 @@
 #define TP_DAEMON_THREAD_PRIORITY RT_MAIN_THREAD_PRIORITY + 1
 #endif
 
+#define TP_DAEMON_THREAD_STACK_SIZE (2*1024*1024)
+
 #define BM1690_TIMER_CUR_VAL	0x4
 #define BM1690_TIMER_INT_STATUS	0xa8
 
@@ -124,7 +126,7 @@ int tpu_daemon_run(void)
 	rt_thread_t tid = RT_NULL;
 	tid = rt_thread_create("tp_daemon",
 	daemon_main, NULL,
-	RT_MAIN_THREAD_STACK_SIZE,
+	TP_DAEMON_THREAD_STACK_SIZE,
 	TP_DAEMON_THREAD_PRIORITY, 20);
 	if(tid != NULL)
 		rt_thread_startup(tid);
