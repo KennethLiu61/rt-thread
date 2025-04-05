@@ -1,3 +1,4 @@
+#include <rtthread.h>
 #include "tpu_kernel_internel.h"
 
 const var_context_t VAR_CONTEXT_ZERO = {.addr = 0};
@@ -62,6 +63,7 @@ void tpu_bdc_fp_mm_with_bias(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_mm_with_bias);
 
 void tpu_bdc_fp_mm_R_trans_with_bias(
     local_addr_t  output_addr,
@@ -124,6 +126,7 @@ void tpu_bdc_fp_mm_R_trans_with_bias(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_mm_R_trans_with_bias);
 void tpu_bdc_fp_mm_all_trans_with_bias(
     local_addr_t  output_addr,
     local_addr_t  left_addr,

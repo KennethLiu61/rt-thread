@@ -6,12 +6,18 @@ src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
 
 src += ['firmware_base/src/kernel/tpu_kernel.c']
 src += ['firmware_base/src/kernel/tpu_kernel_sync.c']
+src += ['firmware_base/src/kernel/tpu_kernel_mm.c']
 src += ['firmware_base/src/kernel/tpu_common.c']
+src += ['firmware_base/src/kernel/tpu_cast.c']
 
 src += ['firmware_base/src/atomic/atomic_sys_gen_cmd.c']
 src += ['firmware_base/src/atomic/atomic_gdma_gen_cmd.c']
+src += ['firmware_base/src/atomic/atomic_sdma_gen_cmd.c']
+src += ['firmware_base/src/atomic/atomic_mm2_gen_cmd.c']
 src += ['firmware_base/src/atomic/atomic_bc_gen_cmd.c']
 src += ['firmware_base/src/atomic/atomic_tensor_arithmetic_gen_cmd.c']
+src += ['firmware_base/src/atomic/atomic_pooling_depthwise_gen_cmd.c']
+src += ['firmware_base/src/atomic/atomic_special_func_gen_cmd.c']
 
 src += ['firmware_base/src/fullnet/nodechip_multi_fullnet.c']
 

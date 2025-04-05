@@ -141,7 +141,6 @@ int tpu_workitem_num() {
 }
 
 int tpu_workitem_index() {
-  rt_kprintf("### %s ###\n", __func__);
   return g_core_context.workitem_id;
 }
 RTM_EXPORT(tpu_workitem_index);
@@ -468,6 +467,7 @@ void tpu_sync_all() {
   int msg_id = get_core_sync_msg_id();
   tpu_sync_all_with_msg_id(msg_id);
 }
+RTM_EXPORT(tpu_sync_all);
 
 void tpu_sync_all_with_msg_id(int msg_id)
 {

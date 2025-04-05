@@ -34,6 +34,7 @@ int tpu_unified_c_offset(int c, int c_stride, data_type_t dtype) {
 unsigned long long tpu_l2_sram_get_start_addr() {
     return L2_SRAM_START_ADDR | (L2M_TAG << 40);
 }
+RTM_EXPORT(tpu_l2_sram_get_start_addr);
 unsigned long long tpu_global_mem_get_start_addr() {
     return GLOBAL_MEM_START_ADDR;
 }
@@ -272,7 +273,6 @@ __attribute__((weak)) void execute_defered_c2c();
 THREAD int no_recursive_polls_please;
 
 void tpu_initialize(void) {
-    rt_kprintf("### %s ###\n", __func__);
 #ifdef USING_CMODEL
     if (override_cmdid) return;
 #endif
@@ -615,14 +615,12 @@ void tpu_vsdma_poll() {
 }
 
 void tpu_parallel_start() {
-    rt_kprintf("### %s ###\n", __func__);
     TPUKERNEL_ASSERT(!id_node.in_parallel_state);
     cmd_id_divide(&id_node, &bdc_id_node, &gdma_id_node);
 }
 RTM_EXPORT(tpu_parallel_start);
 
 void tpu_parallel_end() {
-    rt_kprintf("### %s ###\n", __func__);
     TPUKERNEL_ASSERT(id_node.in_parallel_state);
 #ifdef USING_SGDNN_BOTH_MESG_TEST
     tpu_sync_core();
@@ -977,6 +975,7 @@ void tpu_gdma_cpy_nc_trans_L2S(
     }
     CHECK_GDMA_OVERFLOW;
 }
+RTM_EXPORT(tpu_gdma_cpy_nc_trans_L2S);
 void tpu_gdma_cpy_L2L(
     local_addr_t  dst_addr,
     local_addr_t  src_addr,
@@ -3523,6 +3522,7 @@ void tpu_bdc_fp_sub(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_sub);
 void tpu_bdc_fp32_mac(
     local_addr_t  dst_addr,
     local_addr_t  src0_addr,
@@ -3829,6 +3829,7 @@ void tpu_bdc_cpy(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_cpy);
 void tpu_bdc_cpy_cross_npu(
     local_addr_t  dst_addr,
     local_addr_t  src_addr,
@@ -3971,6 +3972,7 @@ void tpu_bdc_cast(
     }
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_cast);
 void tpu_bdc_abs(
     local_addr_t  dst_addr,
     local_addr_t  src_addr,
@@ -4071,6 +4073,7 @@ void tpu_bdc_fp_floor(
         dtype,
         RM_DOWN);
 }
+RTM_EXPORT(tpu_bdc_fp_floor);
 void tpu_bdc_fp_ceil(
     local_addr_t  dst_addr,
     local_addr_t  src_addr,
@@ -7870,6 +7873,7 @@ void tpu_bdc_fp_max_pool2d(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_max_pool2d);
 void tpu_bdc_fp_min_pool2d(
     local_addr_t      output_addr,
     local_addr_t      input_addr,
@@ -8706,6 +8710,7 @@ void tpu_bdc_fp_avg_pool2d(
                               scale);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_avg_pool2d);
 
 // only per-tensor fp8 for quantize
 void tpu_bdc_fp8_avg_pool2d(
@@ -9387,6 +9392,7 @@ void tpu_bdc_fp_tunable_rsqrt(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_tunable_rsqrt);
 
 void tpu_bdc_fp32_tunable_rsqrt(
     local_addr_t  dst_addr,
@@ -9555,6 +9561,7 @@ void tpu_bdc_fp_taylor(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_taylor);
 void tpu_bdc_fp32_exp(
     local_addr_t  dst_addr,
     local_addr_t  src_addr,
@@ -11617,6 +11624,7 @@ void tpu_bdc_npu_bcast(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_npu_bcast);
 void tpu_bdc_int_pc_requant(
     local_addr_t     dst_addr,
     local_addr_t     src_addr,
@@ -11956,6 +11964,7 @@ void tpu_bdc_fp_tunable_div(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_tunable_div);
 void tpu_bdc_fp32_tunable_div(
     local_addr_t  dst_addr,
     local_addr_t  src0_addr,
@@ -12066,6 +12075,7 @@ void tpu_bdc_fp_tunable_C_div(
         BDC_NODE);
     CHECK_BDC_OVERFLOW;
 }
+RTM_EXPORT(tpu_bdc_fp_tunable_C_div);
 
 void tpu_bdc_fp32_tunable_C_div(
     local_addr_t  dst_addr,
@@ -15264,6 +15274,7 @@ void tpu_sdma_cpy_S2S(
     dst_addr, src_addr, shape,
     dst_stride, src_stride, dtype, DEFAULT_SDMA_PORT);
 }
+RTM_EXPORT(tpu_sdma_cpy_S2S);
 
 void tpu_vsdma_cpy_S2S(
     system_addr_t  dst_addr,
@@ -17115,3 +17126,11 @@ void tpu_bdc_fp_tanh(
         NULL,
         dtype);
 }
+
+RTM_EXPORT(tpu_bdc_fp_add);
+RTM_EXPORT(tpu_bdc_fp_mul_C);
+RTM_EXPORT(tpu_bdc_max);
+RTM_EXPORT(tpu_bdc_max_C);
+RTM_EXPORT(tpu_bdc_min_C);
+RTM_EXPORT(tpu_bdc_int_add_C);
+RTM_EXPORT(tpu_bdc_fp_mul);
