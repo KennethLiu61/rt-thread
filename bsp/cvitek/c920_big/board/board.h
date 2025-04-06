@@ -27,7 +27,9 @@ extern unsigned int __bss_end;
 #endif
 
 #define RT_HW_HEAP_BEGIN ((void *)&__bss_end)
-#define RT_HW_HEAP_END   ((void *)(KERNEL_VADDR_START + 16 * 1024 * 1024))
+//定义了从RT_HW_HEAP_BEGIN到内存末尾(1MB)的地址范围，即从__bss_end到内存末尾(1MB)的地址范围。
+//这个地址范围通常用于分配动态内存，例如在RT-Thread中使用内存池来管理内存。
+#define RT_HW_HEAP_END   ((void *)(KERNEL_VADDR_START + (TOTAL_MEMORY - 1 * 1024 * 1024)))
 #define RT_HW_PAGE_START RT_HW_HEAP_END
 #define RT_HW_PAGE_END   ((void *)(KERNEL_VADDR_START + 32 * 1024 * 1024))
 

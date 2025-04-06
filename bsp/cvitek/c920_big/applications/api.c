@@ -156,7 +156,7 @@ int load_lib_process(struct task_item *task_item)
 	ret &= find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_poll", (char **)&cur_thread->poll_engine_done);
 	if (!ret) {
 		//relocate task_barrier
-		cur_thread->task_barrier = tpu_core_barrier;
+		cur_thread->task_barrier = NULL;
 		//relocate poll_engine_done
 		cur_thread->poll_engine_done = tpu_poll;
 	}

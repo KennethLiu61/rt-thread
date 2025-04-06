@@ -9,6 +9,7 @@ PKGS_DIR := packages
 source "$(RTT_DIR)/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
+source "libbm1690/Kconfig"
 
 # 定义整个BSP形态
 config BSP_USING_SG2260

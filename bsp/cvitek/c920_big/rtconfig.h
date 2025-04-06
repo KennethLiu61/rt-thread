@@ -463,12 +463,17 @@
 #define BSP_UART2_TX_PINNAME "UART2_TX"
 #define BSP_UART_IRQ_BASE 2
 /* end of General Drivers Configuration */
+
+/* TPU kernel lib */
+
+#define BM1690_LIB
+/* end of TPU kernel lib */
 #define BSP_USING_SG2260
 #define TPU_INDEX 0
 #define C920_PLIC_PHY_ADDR 0x690C800000
 #define C920_BOOT_ADDR 0x1F00200000
 #define C920_TPU_SYS_ADDR 0x6900000000
-#define TOTAL_MEMORY 0x2000000
+#define TOTAL_MEMORY 0x4000000
 #define IRQ_MAX_NR 512
 #define BSP_GPIO_IRQ_BASE 26
 #define __STACKSIZE__ 8192
