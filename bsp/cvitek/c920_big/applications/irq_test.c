@@ -45,6 +45,30 @@ static void msi_irq_test(int argc, char**argv)
 }
 
 MSH_CMD_EXPORT(msi_irq_test, msi_irq test: msi_irq <0-15>);
+
+//测试禁止调度或者禁止中断，是否真的有效屏蔽中断。
+//结论：禁止中断有效屏蔽中断，但是禁止调度不会屏蔽中断。
+void my_spinlock_test(void)
+{
+    rt_kprintf("my_spinlock_test \n");
+    struct rt_spinlock lock;
+    rt_base_t level;
+    rt_spin_lock_init(&lock);
+
+    rt_enter_critical();        //只禁止调度，不会禁止中断
+    // level = rt_spin_lock_irqsave(&lock); //禁止中断也禁止调度
+    rt_kprintf("spin lock irq save \n");
+
+    //trigger irq
+    mmio_write_32(TPSYS_MSI_REG_BASE, 0x1);
+    for(int i = 0; i < 100000000; i++)
+        ;
+
+    rt_kprintf("spin unlock irq restore \n");
+    // rt_spin_unlock_irqrestore(&lock, level);
+    rt_exit_critical_safe(level);
+}
+MSH_CMD_EXPORT(my_spinlock_test, test spin_lock_irqsave func);
 #else
 void msi_irq_init(void)
 {
