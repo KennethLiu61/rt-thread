@@ -200,7 +200,6 @@
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_RTC
 #define RT_USING_KTIME
 /* end of Device Drivers */
 
