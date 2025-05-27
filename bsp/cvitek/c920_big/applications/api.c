@@ -135,18 +135,20 @@ int load_lib_process(struct task_item *task_item)
 	optimize_memcpy(ptr_lib_item->lib.lib_name, load_module->library_name, LIB_MAX_NAME_LEN);
 	optimize_memcpy(ptr_lib_item->lib.md5, load_module->md5, MD5SUM_LEN);
 	list_add(&ptr_lib_item->list, &cur_thread->load_lib_list);
-
+#ifdef BM1690_LIB
 	extern void tpu_kernel_init(int core_idx);
 	extern int tpu_core_barrier(int msg_id, int core_num);
 	extern void tpu_poll();
-
+#endif
 	void (*tpu_func_ptr)(int core_id);
 
 	ret = find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_kernel_init", (char **)&tpu_func_ptr);
 	if (!ret) {
 		pr_debug("%s: before tpu_kernel_init\n", __func__);
-		//relocate tpu_kernel_init
+#ifdef BM1690_LIB
+		// relocate tpu_kernel_init
 		tpu_func_ptr = tpu_kernel_init;
+#endif
 		tpu_func_ptr(cur_thread->tpu_id);
 		pr_debug("%s: after tpu_kernel_init\n", __func__);
 	} else
@@ -154,13 +156,14 @@ int load_lib_process(struct task_item *task_item)
 	
 	ret = find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_core_barrier", (char **)&cur_thread->task_barrier);
 	ret &= find_sym_by_name(&ptr_lib_item->lib, (unsigned char *)"tpu_poll", (char **)&cur_thread->poll_engine_done);
+#ifdef BM1690_LIB
 	if (!ret) {
 		//relocate task_barrier
 		cur_thread->task_barrier = NULL;
 		//relocate poll_engine_done
 		cur_thread->poll_engine_done = tpu_poll;
 	}
-
+#endif
 	return ret;
 }
 
@@ -227,6 +230,7 @@ int unload_lib_process(struct task_item *task_item)
 
 	return ret;
 }
+#ifdef BM1690_LIB
 typedef struct {
     uint32_t physical_core_id;
     uint64_t group_num;
@@ -234,6 +238,7 @@ typedef struct {
     uint32_t group_id;
     uint32_t workitem_id;
 } __attribute__((packed)) tpu_groupset_info_t;
+#endif
 int launch_func_process(struct task_item *task_item)
 {
 	struct list_head *pos_lib;
@@ -271,8 +276,10 @@ int launch_func_process(struct task_item *task_item)
 			if (!ret) {
 				pr_debug("%s: before set_tpu_groupset_info\n", __func__);
 				tp_debug("find set tpu info\n");
-				void set_tpu_groupset_info( tpu_groupset_info_t *tpu_groupset);
+#ifdef BM1690_LIB
+				extern void set_tpu_groupset_info( tpu_groupset_info_t *tpu_groupset);
 				set_tpu_info_func_ptr = set_tpu_groupset_info;
+#endif
 				set_tpu_info_func_ptr(&groupset_info);
 				pr_debug("%s: after set_tpu_groupset_info\n", __func__);
 			} else
